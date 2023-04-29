@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import messages from "./User.messages";
 import ResponseSender from "../utils/responseSender";
 import InvalidChecker from "../utils/invalidChecker";
+import UserUtils from "./User.utils";
 
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
@@ -19,17 +20,17 @@ export default class UserController {
 		}
 
 		// Valida email usando RegEx
-		if (!InvalidChecker.regexEmail(email)) {
+		if (!UserUtils.regexEmail(email)) {
 			return ResponseSender.sendMessage(err.invalidEmail, req, res);
 		}
 
 		// Checa se as senhas enviadas são iguais
-		if (!InvalidChecker.passwordCompare(password, passwordRepeat)) {
+		if (!UserUtils.passwordCompare(password, passwordRepeat)) {
 			return ResponseSender.sendMessage(err.diffPasswords, req, res);
 		}
 
 		// Checa se a senha é forte
-		if (!InvalidChecker.regexPassword(password)) {
+		if (!UserUtils.regexPassword(password)) {
 			return ResponseSender.sendMessage(err.passwordTooWeak, req, res);
 		}
 
@@ -58,7 +59,7 @@ export default class UserController {
 
 	static async loginUser(req: Request, res: Response): Promise<void> {
 		// Checa se o usuário já está logado
-		if (InvalidChecker.isLogged(req)) {
+		if (UserUtils.isLogged(req)) {
 			return ResponseSender.sendMessage(err.alreadyLogged, req, res);
 		}
 
@@ -77,7 +78,7 @@ export default class UserController {
 		}
 
 		// Checa se a senha enviada está correta
-		if (!InvalidChecker.passwordDehash(password, findUser.password)) {
+		if (!UserUtils.passwordDehash(password, findUser.password)) {
 			return ResponseSender.sendMessage(err.diffPasswords, req, res);
 		}
 
@@ -92,7 +93,7 @@ export default class UserController {
 
 	static logoutUser(req: Request, res: Response) {
 		// Checa se o usuário está logado
-		if (!InvalidChecker.isLogged(req)) {
+		if (!UserUtils.isLogged(req)) {
 			return ResponseSender.sendMessage(err.notLoggedYet, req, res);
 		}
 
