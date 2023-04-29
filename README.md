@@ -1,12 +1,17 @@
 # Task 2 Do (T2D)
 
-Aplicação Web com frontend e backend desenvolvidos com o intuito de melhorar a gerência de projetos em trabalhos colaborativos, usando uma interface moderna e intuitiva
+🌎 Aplicação Web com frontend e backend desenvolvidos com o intuito de melhorar a gerência de projetos em trabalhos colaborativos, usando uma interface moderna e intuitiva
 
 - [ ] TODO: Banner da aplicação
 
 ## Equipe de Desenvolvimento
 
-- [ ] TODO: Tabela com atribuição de tarefas e links para os devs
+| Nome                                                  | Funções             |
+| :---------------------------------------------------- | :------------------ |
+| [swshadows](https://github.com/swshadows)             | 🎲 Backend & Design |
+| [leonardosilva97](https://github.com/leonardosilva97) | 🎲                  |
+| [EndrewDias](https://github.com/EndrewDias)           | 🎲                  |
+| [David-TM12](https://github.com/David-TM12)           | 🎲                  |
 
 ## Inicialização
 
@@ -14,20 +19,34 @@ Aplicação Web com frontend e backend desenvolvidos com o intuito de melhorar a
 
 ### Requisitos
 
-</div>
+[Node.js](https://nodejs.org/) & [MySQL](https://www.mysql.com)
 
-- [ ] TODO: Requisitos e instalações
+</div>
 
 - Use os comandos para clonar o repositório
 
-  ```
+  ```bash
   git clone https://github.com/swshadows/t2d.git
   cd t2d
   ```
 
 #### Backend
 
-- [ ] TODO: Todo resto dos comandos de inicialização
+- Crie um arquivo em `backend` chamado `.env`
+
+  ```bash
+  SESSION_SECRET="" # Pode ser uma string qualquer, ex: secret
+  DATABASE_URL="mysql://USERNAME:PASSWORD@localhost:3306/t2d?schema=public" # Substitua USERNAME e PASSWORD pelo user e senha do seu banco
+  ```
+
+- Rode os seguintes comandos
+
+  ```bash
+  cd ./backend        # Acessa a pasta do backend
+  npm install         # Instala as dependências
+  npm run db:migrate  # Inicializa o banco de dados
+  npm run dev         # Inicializa a API da aplicação
+  ```
 
 #### Frontend
 
