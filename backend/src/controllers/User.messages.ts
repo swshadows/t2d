@@ -40,13 +40,42 @@ const messages = {
 				code: "passwordTooWeak",
 			},
 		},
+		alreadyLogged: {
+			status: 400,
+			json: {
+				error: "Erro: Você já está logado",
+				code: "alreadyLogged",
+			},
+		},
+		notLoggedYet: {
+			status: 400,
+			json: {
+				error: "Erro: Você ainda não fez login",
+				code: "notLoggedYet",
+			},
+		},
 	},
+
 	success: {
 		userCreated: {
 			status: 200,
 			json: {
-				success: "Successo: Usuário criado com sucesso",
+				success: "Sucesso: Usuário criado com sucesso",
 				code: "userCreated",
+			},
+		},
+		userLogged: {
+			status: 200,
+			json: {
+				success: "Sucesso: Usuário fez login com sucesso",
+				code: "userLogged",
+			},
+		},
+		userLogout: {
+			status: 200,
+			json: {
+				success: "Sucesso: Usuário fez logout com sucesso",
+				code: "userLogout",
 			},
 		},
 	},

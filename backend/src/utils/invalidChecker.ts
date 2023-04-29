@@ -1,3 +1,6 @@
+import { Request } from "express";
+import bcrypt from "bcrypt";
+
 export default class InvalidChecker {
 	// Checa se algum dos argumentos passados estão vazios, retornando true caso algum esteja
 	static isEmpty(...args: String[]): boolean {
@@ -20,7 +23,17 @@ export default class InvalidChecker {
 	}
 
 	// Checa se a senha é igual a sua repetição
-	static passwordCompare(first: string, second: string) {
+	static passwordCompare(first: string, second: string): boolean {
 		return first == second;
+	}
+
+	// Checa se senha enviada é a mesma guardada, usando dehash
+	static passwordDehash(password: string, hash: string): boolean {
+		return bcrypt.compareSync(password, hash);
+	}
+
+	// Checa se o usuário está logado ou não
+	static isLogged(req: Request): boolean {
+		return req.session.user ? true : false;
 	}
 }
