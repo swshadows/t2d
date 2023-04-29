@@ -20,17 +20,17 @@ export default class UserController {
 		}
 
 		// Valida email usando RegEx
-		if (!UserUtils.regexEmail(email)) {
+		if (!UserUtils.isEmailValid(email)) {
 			return ResponseSender.sendMessage(err.invalidEmailRegex, req, res);
 		}
 
 		// Checa se as senhas enviadas são iguais
-		if (!UserUtils.passwordCompare(password, passwordRepeat)) {
+		if (!UserUtils.arePasswordsEqual(password, passwordRepeat)) {
 			return ResponseSender.sendMessage(err.diffPasswords, req, res);
 		}
 
 		// Checa se a senha é forte
-		if (!UserUtils.regexPassword(password)) {
+		if (!UserUtils.isPasswordValid(password)) {
 			return ResponseSender.sendMessage(err.passwordTooWeak, req, res);
 		}
 
@@ -78,7 +78,7 @@ export default class UserController {
 		}
 
 		// Checa se a senha enviada está correta
-		if (!UserUtils.passwordDehash(password, findUser.password)) {
+		if (!UserUtils.isPasswordCorrect(password, findUser.password)) {
 			return ResponseSender.sendMessage(err.passwordWrong, req, res);
 		}
 
@@ -126,7 +126,7 @@ export default class UserController {
 		}
 
 		// Checa se o regex do email é válido
-		if (!UserUtils.regexEmail(email)) {
+		if (!UserUtils.isEmailValid(email)) {
 			return ResponseSender.sendMessage(err.invalidEmailRegex, req, res);
 		}
 
@@ -158,12 +158,12 @@ export default class UserController {
 		}
 
 		// Compara as 2 novas senhas enviadas
-		if (!UserUtils.passwordCompare(newPassword, newPasswordRepeat)) {
+		if (!UserUtils.arePasswordsEqual(newPassword, newPasswordRepeat)) {
 			return ResponseSender.sendMessage(err.diffPasswords, req, res);
 		}
 
 		// Checa se a senha é forte
-		if (!UserUtils.regexPassword(password)) {
+		if (!UserUtils.isPasswordValid(password)) {
 			return ResponseSender.sendMessage(err.passwordTooWeak, req, res);
 		}
 
@@ -173,7 +173,7 @@ export default class UserController {
 			if (!findUser) {
 				return ResponseSender.sendMessage(err.userNotFound, req, res);
 			}
-			if (!UserUtils.passwordDehash(password, findUser.password)) {
+			if (!UserUtils.isPasswordCorrect(password, findUser.password)) {
 				return ResponseSender.sendMessage(err.passwordWrong, req, res);
 			}
 
