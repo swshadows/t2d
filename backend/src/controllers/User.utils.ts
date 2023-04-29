@@ -23,9 +23,4 @@ export default class UserUtils {
 	static isPasswordCorrect(password: string, hash: string): boolean {
 		return bcrypt.compareSync(password, hash);
 	}
-
-	// Checa se o usuário está logado ou não
-	static isLogged(req: Request): boolean {
-		return req.session.user ? true : false;
-	}
 }

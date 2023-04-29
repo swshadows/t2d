@@ -59,7 +59,7 @@ export default class UserController {
 
 	static async loginUser(req: Request, res: Response): Promise<void> {
 		// Checa se o usuário já está logado
-		if (UserUtils.isLogged(req)) {
+		if (req.session.user) {
 			return ResponseSender.sendMessage(err.alreadyLogged, req, res);
 		}
 
@@ -93,7 +93,7 @@ export default class UserController {
 
 	static logoutUser(req: Request, res: Response) {
 		// Checa se o usuário está logado
-		if (!UserUtils.isLogged(req)) {
+		if (!req.session.user) {
 			return ResponseSender.sendMessage(err.notLoggedYet, req, res);
 		}
 
@@ -107,7 +107,7 @@ export default class UserController {
 
 	static async getUser(req: Request, res: Response) {
 		// Checa se o usuário está logado
-		if (!UserUtils.isLogged(req)) {
+		if (!req.session.user) {
 			return ResponseSender.sendMessage(err.notLoggedYet, req, res);
 		}
 
@@ -116,7 +116,7 @@ export default class UserController {
 
 	static async updateEmail(req: Request, res: Response) {
 		// Checa se o usuário está logado
-		if (!UserUtils.isLogged(req)) {
+		if (!req.session.user) {
 			return ResponseSender.sendMessage(err.notLoggedYet, req, res);
 		}
 		const { email } = req.body;
@@ -137,17 +137,15 @@ export default class UserController {
 		}
 
 		// Atualiza o email
-		if (req.session.user) {
-			await prisma.user.update({ where: { email: req.session.user.email }, data: { email: email } });
-			req.session.user.email = email;
-		}
+		await prisma.user.update({ where: { email: req.session.user.email }, data: { email: email } });
+		req.session.user.email = email;
 
 		ResponseSender.sendMessage(suc.emailUpdated, req, res);
 	}
 
 	static async updatePassword(req: Request, res: Response) {
 		// Checa se o usuário está logado
-		if (!UserUtils.isLogged(req)) {
+		if (!req.session.user) {
 			return ResponseSender.sendMessage(err.notLoggedYet, req, res);
 		}
 
@@ -168,37 +166,33 @@ export default class UserController {
 		}
 
 		// Compara a senha enviada com a senha no banco
-		if (req.session.user) {
-			const findUser = await prisma.user.findUnique({ where: { email: req.session.user.email } });
-			if (!findUser) {
-				return ResponseSender.sendMessage(err.userNotFound, req, res);
-			}
-			if (!UserUtils.isPasswordCorrect(password, findUser.password)) {
-				return ResponseSender.sendMessage(err.passwordWrong, req, res);
-			}
-
-			// Atualiza a senha
-			await prisma.user.update({ where: { email: req.session.user.email }, data: { password: bcrypt.hashSync(newPassword, 10) } });
-			ResponseSender.sendMessage(suc.passwordUpdated, req, res);
+		const findUser = await prisma.user.findUnique({ where: { email: req.session.user.email } });
+		if (!findUser) {
+			return ResponseSender.sendMessage(err.userNotFound, req, res);
 		}
+		if (!UserUtils.isPasswordCorrect(password, findUser.password)) {
+			return ResponseSender.sendMessage(err.passwordWrong, req, res);
+		}
+
+		// Atualiza a senha
+		await prisma.user.update({ where: { email: req.session.user.email }, data: { password: bcrypt.hashSync(newPassword, 10) } });
+		ResponseSender.sendMessage(suc.passwordUpdated, req, res);
 	}
 
 	static async deleteUser(req: Request, res: Response) {
 		// Checa se o usuário está logado
-		if (!UserUtils.isLogged(req)) {
+		if (!req.session.user) {
 			return ResponseSender.sendMessage(err.notLoggedYet, req, res);
 		}
 
-		if (req.session.user) {
-			// Apaga o usuário do banco
-			await prisma.user.delete({ where: { email: req.session.user.email } });
+		// Apaga o usuário do banco
+		await prisma.user.delete({ where: { email: req.session.user.email } });
 
-			// Destroi a sessão, fazendo logout
-			req.session.destroy((err) => {
-				if (err) throw err;
-			});
+		// Destroi a sessão, fazendo logout
+		req.session.destroy((err) => {
+			if (err) throw err;
+		});
 
-			ResponseSender.sendMessage(suc.userDeleted, req, res);
-		}
+		ResponseSender.sendMessage(suc.userDeleted, req, res);
 	}
 }
