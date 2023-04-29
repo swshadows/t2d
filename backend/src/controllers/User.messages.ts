@@ -99,6 +99,13 @@ const messages = {
 				code: "passwordUpdated",
 			},
 		},
+		userDeleted: {
+			status: 200,
+			json: {
+				success: "Sucesso: Usuário apagado com sucesso",
+				code: "userDeleted",
+			},
+		},
 	},
 };
 export default messages;

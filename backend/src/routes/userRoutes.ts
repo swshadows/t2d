@@ -8,5 +8,6 @@ router.post("/logout", UserController.logoutUser);
 router.get("/:username", UserController.getUser);
 router.put("/updateEmail", UserController.updateEmail);
 router.put("/updatePassword", UserController.updatePassword);
+router.delete("/delete", UserController.deleteUser);
 
 export default router;

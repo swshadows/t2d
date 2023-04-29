@@ -182,4 +182,23 @@ export default class UserController {
 			ResponseSender.sendMessage(suc.passwordUpdated, req, res);
 		}
 	}
+
+	static async deleteUser(req: Request, res: Response) {
+		// Checa se o usuário está logado
+		if (!UserUtils.isLogged(req)) {
+			return ResponseSender.sendMessage(err.notLoggedYet, req, res);
+		}
+
+		if (req.session.user) {
+			// Apaga o usuário do banco
+			await prisma.user.delete({ where: { email: req.session.user.email } });
+
+			// Destroi a sessão, fazendo logout
+			req.session.destroy((err) => {
+				if (err) throw err;
+			});
+
+			ResponseSender.sendMessage(suc.userDeleted, req, res);
+		}
+	}
 }
