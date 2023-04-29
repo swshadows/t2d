@@ -92,6 +92,13 @@ const messages = {
 				code: "emailUpdated",
 			},
 		},
+		usernameUpdated: {
+			status: 200,
+			json: {
+				success: "Sucesso: Nome de usuário atualizado com sucesso",
+				code: "usernameUpdated",
+			},
+		},
 		passwordUpdated: {
 			status: 200,
 			json: {

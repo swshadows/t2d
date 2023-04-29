@@ -143,6 +143,30 @@ export default class UserController {
 		ResponseSender.sendMessage(suc.emailUpdated, req, res);
 	}
 
+	static async updateUsername(req: Request, res: Response) {
+		// Checa se o usuário está logado
+		if (!req.session.user) {
+			return ResponseSender.sendMessage(err.notLoggedYet, req, res);
+		}
+		const { username } = req.body;
+		// Checa se o nome de usuário está preenchido
+		if (!username) {
+			return ResponseSender.sendMessage(err.emptyValues, req, res);
+		}
+
+		// Checa se o nome de usuário já está em uso
+		const findUsername = await prisma.user.findUnique({ where: { username } });
+		if (findUsername) {
+			return ResponseSender.sendMessage(err.usernameExists, req, res);
+		}
+
+		// Atualiza o nome de usuário
+		await prisma.user.update({ where: { username: req.session.user.username }, data: { username: username } });
+		req.session.user.username = username;
+
+		ResponseSender.sendMessage(suc.usernameUpdated, req, res);
+	}
+
 	static async updatePassword(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
