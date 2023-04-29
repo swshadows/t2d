@@ -6,5 +6,6 @@ router.post("/register", UserController.registerUser);
 router.post("/login", UserController.loginUser);
 router.post("/logout", UserController.logoutUser);
 router.get("/:username", UserController.getUser);
+router.put("/updateEmail", UserController.updateEmail);
 
 export default router;

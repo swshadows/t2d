@@ -11,9 +11,9 @@ const messages = {
 				code: "emptyValues",
 			},
 		},
-		invalidEmail: {
+		invalidEmailRegex: {
 			status: 400,
-			json: { error: "Erro: O email enviado é invalido", code: "invalidEmail" },
+			json: { error: "Erro: O email enviado é invalido", code: "invalidEmailRegex" },
 		},
 		diffPasswords: {
 			status: 400,
@@ -76,6 +76,13 @@ const messages = {
 			json: {
 				success: "Sucesso: Usuário fez logout com sucesso",
 				code: "userLogout",
+			},
+		},
+		emailUpdated: {
+			status: 200,
+			json: {
+				success: "Sucesso: Email atualizado com sucesso",
+				code: "emailUpdated",
 			},
 		},
 	},

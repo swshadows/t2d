@@ -21,7 +21,7 @@ export default class UserController {
 
 		// Valida email usando RegEx
 		if (!UserUtils.regexEmail(email)) {
-			return ResponseSender.sendMessage(err.invalidEmail, req, res);
+			return ResponseSender.sendMessage(err.invalidEmailRegex, req, res);
 		}
 
 		// Checa se as senhas enviadas são iguais
@@ -112,5 +112,37 @@ export default class UserController {
 		}
 
 		res.status(200).json(req.session.user);
+	}
+
+	static async updateEmail(req: Request, res: Response) {
+		// Checa se o usuário está logado
+		if (!UserUtils.isLogged(req)) {
+			return ResponseSender.sendMessage(err.notLoggedYet, req, res);
+		}
+		const { email } = req.body;
+
+		// Checa se o email está preenchido
+		if (!email) {
+			return ResponseSender.sendMessage(err.emptyValues, req, res);
+		}
+
+		// Checa se o regex do email é válido
+		if (!UserUtils.regexEmail(email)) {
+			return ResponseSender.sendMessage(err.invalidEmailRegex, req, res);
+		}
+
+		// Checa se o email já está em uso
+		const findEmail = await prisma.user.findUnique({ where: { email } });
+		if (findEmail) {
+			return ResponseSender.sendMessage(err.emailExists, req, res);
+		}
+
+		// Atualiza o email
+		if (req.session.user) {
+			await prisma.user.update({ where: { email: req.session.user.email }, data: { email: email } });
+			req.session.user.email = email;
+		}
+
+		ResponseSender.sendMessage(suc.emailUpdated, req, res);
 	}
 }
