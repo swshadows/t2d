@@ -104,4 +104,13 @@ export default class UserController {
 
 		ResponseSender.sendMessage(suc.userLogout, req, res);
 	}
+
+	static async getUser(req: Request, res: Response) {
+		// Checa se o usuário está logado
+		if (!UserUtils.isLogged(req)) {
+			return ResponseSender.sendMessage(err.notLoggedYet, req, res);
+		}
+
+		res.status(200).json(req.session.user);
+	}
 }
