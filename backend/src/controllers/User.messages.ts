@@ -54,6 +54,13 @@ const messages = {
 				code: "notLoggedYet",
 			},
 		},
+		passwordWrong: {
+			status: 400,
+			json: {
+				error: "Erro: A senha está incorreta",
+				code: "passwordWrong",
+			},
+		},
 	},
 
 	success: {
@@ -83,6 +90,13 @@ const messages = {
 			json: {
 				success: "Sucesso: Email atualizado com sucesso",
 				code: "emailUpdated",
+			},
+		},
+		passwordUpdated: {
+			status: 200,
+			json: {
+				success: "Sucesso: Senha atualizada com sucesso",
+				code: "passwordUpdated",
 			},
 		},
 	},

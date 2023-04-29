@@ -79,7 +79,7 @@ export default class UserController {
 
 		// Checa se a senha enviada está correta
 		if (!UserUtils.passwordDehash(password, findUser.password)) {
-			return ResponseSender.sendMessage(err.diffPasswords, req, res);
+			return ResponseSender.sendMessage(err.passwordWrong, req, res);
 		}
 
 		// Cria a sessão
@@ -120,7 +120,6 @@ export default class UserController {
 			return ResponseSender.sendMessage(err.notLoggedYet, req, res);
 		}
 		const { email } = req.body;
-
 		// Checa se o email está preenchido
 		if (!email) {
 			return ResponseSender.sendMessage(err.emptyValues, req, res);
@@ -144,5 +143,43 @@ export default class UserController {
 		}
 
 		ResponseSender.sendMessage(suc.emailUpdated, req, res);
+	}
+
+	static async updatePassword(req: Request, res: Response) {
+		// Checa se o usuário está logado
+		if (!UserUtils.isLogged(req)) {
+			return ResponseSender.sendMessage(err.notLoggedYet, req, res);
+		}
+
+		// Checa se há valores nos campos de senha vazios
+		const { password, newPassword, newPasswordRepeat } = req.body;
+		if (InvalidChecker.isEmpty(password, newPassword, newPasswordRepeat)) {
+			return ResponseSender.sendMessage(err.emptyValues, req, res);
+		}
+
+		// Compara as 2 novas senhas enviadas
+		if (!UserUtils.passwordCompare(newPassword, newPasswordRepeat)) {
+			return ResponseSender.sendMessage(err.diffPasswords, req, res);
+		}
+
+		// Checa se a senha é forte
+		if (!UserUtils.regexPassword(password)) {
+			return ResponseSender.sendMessage(err.passwordTooWeak, req, res);
+		}
+
+		// Compara a senha enviada com a senha no banco
+		if (req.session.user) {
+			const findUser = await prisma.user.findUnique({ where: { email: req.session.user.email } });
+			if (!findUser) {
+				return ResponseSender.sendMessage(err.userNotFound, req, res);
+			}
+			if (!UserUtils.passwordDehash(password, findUser.password)) {
+				return ResponseSender.sendMessage(err.passwordWrong, req, res);
+			}
+
+			// Atualiza a senha
+			await prisma.user.update({ where: { email: req.session.user.email }, data: { password: bcrypt.hashSync(newPassword, 10) } });
+			ResponseSender.sendMessage(suc.passwordUpdated, req, res);
+		}
 	}
 }
