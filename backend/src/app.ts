@@ -19,7 +19,9 @@ server.use(
 
 // Routes
 import userRoutes from "./routes/userRoutes";
+import projectRoutes from "./routes/projectRoutes";
 server.use("/user", userRoutes);
+server.use("/project", projectRoutes);
 
 server.listen(port, () => {
 	console.log(`🚀 Servidor rodando em http://localhost:${port}`);

@@ -1,15 +1,20 @@
-const messages = {
+export const systemMessages = {
 	error: {
-		userNotFound: {
-			status: 400,
-			json: { error: "Erro: Usuário não encontrado", code: "userNotFound" },
-		},
 		emptyValues: {
 			status: 400,
 			json: {
 				error: "Erro: Há valores vazios no corpo da requisição",
 				code: "emptyValues",
 			},
+		},
+	},
+};
+
+export const userMessages = {
+	error: {
+		userNotFound: {
+			status: 400,
+			json: { error: "Erro: Usuário não encontrado", code: "userNotFound" },
 		},
 		invalidEmailRegex: {
 			status: 400,
@@ -115,4 +120,52 @@ const messages = {
 		},
 	},
 };
-export default messages;
+
+export const productMessages = {
+	error: {
+		projectsNotFound: {
+			status: 404,
+			json: {
+				error: "Erro: Não há projetos cadastrados para o usuário logado",
+				code: "projectsNotFound",
+			},
+		},
+		notOwner: {
+			status: 403,
+			json: {
+				error: "Erro: O usuário logado não é dono do projeto",
+				code: "notOwner",
+			},
+		},
+	},
+	success: {
+		projectCreated: {
+			status: 200,
+			json: {
+				success: "Sucesso: Projeto criado com sucesso",
+				code: "projectCreated",
+			},
+		},
+		projectNameUpdated: {
+			status: 200,
+			json: {
+				success: "Sucesso: Nome do projeto foi atualizado com sucesso",
+				code: "projectNameUpdated",
+			},
+		},
+		projectDescUpdated: {
+			status: 200,
+			json: {
+				success: "Sucesso: Descrição do projeto foi atualizado com sucesso",
+				code: "projectDescUpdated",
+			},
+		},
+		projectDeleted: {
+			status: 200,
+			json: {
+				success: "Sucesso: Projeto apagado com sucesso",
+				code: "projectDeleted",
+			},
+		},
+	},
+};
