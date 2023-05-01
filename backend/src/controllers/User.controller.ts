@@ -118,7 +118,19 @@ export default class UserController {
 			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
-		res.status(200).json(req.session.user);
+		// Checa se foi enviado o nome do usuário
+		const { username } = req.params;
+		if (!username) {
+			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+		}
+
+		// Procura o usuário de acordo com o req.param enviado
+		const user = await prisma.user.findUnique({ where: { username }, select: { username: true, email: true } });
+		if (!user) {
+			return ResponseSender.sendMessage(userErr.userNotFound, req, res);
+		}
+
+		res.status(200).json(user);
 	}
 
 	static async updateEmail(req: Request, res: Response) {

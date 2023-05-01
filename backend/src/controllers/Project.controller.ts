@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import ResponseSender from "../utils/responseSender";
-import { productMessages, systemMessages, userMessages } from "../utils/messages";
+import { projectMessages, systemMessages, userMessages } from "../utils/messages";
 import InvalidChecker from "../utils/invalidChecker";
 
 const prisma = new PrismaClient();
 
-const { error: prodErr, success: prodSuc } = productMessages;
+const { error: projErr, success: projSuc } = projectMessages;
 const { error: userErr } = userMessages;
 const { error: sysErr } = systemMessages;
 
@@ -17,10 +17,10 @@ export default class ProductController {
 			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
-		const projects = await prisma.project.findMany({ where: { userId: req.session.user.id } });
+		const projects = await prisma.project.findMany({ where: { userId: req.session.user.id }, select: { id: true, name: true, desc: true } });
 		// Checa se o usuário tem projetos
-		if (projects.length <= 0) {
-			return ResponseSender.sendMessage(prodErr.projectsNotFound, req, res);
+		if (!projects || !projects.length) {
+			return ResponseSender.sendMessage(projErr.projectsNotFound, req, res);
 		}
 
 		// Retorna os projetos do usuário
@@ -52,7 +52,7 @@ export default class ProductController {
 			},
 		});
 
-		ResponseSender.sendMessage(prodSuc.projectCreated, req, res);
+		ResponseSender.sendMessage(projSuc.projectCreated, req, res);
 	}
 
 	static async updateName(req: Request, res: Response) {
@@ -70,7 +70,7 @@ export default class ProductController {
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
 		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id }] } });
 		if (!project) {
-			return ResponseSender.sendMessage(prodErr.notOwner, req, res);
+			return ResponseSender.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Atualiza o nome do projeto
@@ -86,7 +86,7 @@ export default class ProductController {
 			},
 		});
 
-		ResponseSender.sendMessage(prodSuc.projectNameUpdated, req, res);
+		ResponseSender.sendMessage(projSuc.projectNameUpdated, req, res);
 	}
 
 	static async updateDescription(req: Request, res: Response) {
@@ -104,7 +104,7 @@ export default class ProductController {
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
 		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id }] } });
 		if (!project) {
-			return ResponseSender.sendMessage(prodErr.notOwner, req, res);
+			return ResponseSender.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Atualiza o nome do projeto
@@ -120,7 +120,7 @@ export default class ProductController {
 			},
 		});
 
-		ResponseSender.sendMessage(prodSuc.projectDescUpdated, req, res);
+		ResponseSender.sendMessage(projSuc.projectDescUpdated, req, res);
 	}
 
 	static async deleteProject(req: Request, res: Response) {
@@ -138,7 +138,7 @@ export default class ProductController {
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e deleção de projetos alheios
 		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id }] } });
 		if (!project) {
-			return ResponseSender.sendMessage(prodErr.notOwner, req, res);
+			return ResponseSender.sendMessage(projErr.notOwner, req, res);
 		}
 
 		await prisma.user.update({
@@ -152,6 +152,6 @@ export default class ProductController {
 			},
 		});
 
-		ResponseSender.sendMessage(prodSuc.projectDeleted, req, res);
+		ResponseSender.sendMessage(projSuc.projectDeleted, req, res);
 	}
 }

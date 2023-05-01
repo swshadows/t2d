@@ -121,7 +121,7 @@ export const userMessages = {
 	},
 };
 
-export const productMessages = {
+export const projectMessages = {
 	error: {
 		projectsNotFound: {
 			status: 404,
@@ -165,6 +165,111 @@ export const productMessages = {
 			json: {
 				success: "Sucesso: Projeto apagado com sucesso",
 				code: "projectDeleted",
+			},
+		},
+	},
+};
+
+export const documentMessages = {
+	error: {
+		docNotFound: {
+			status: 400,
+			json: {
+				error: "Erro: O documento requisitado não existe no projeto",
+				code: "docNotFound",
+			},
+		},
+		docsNotFound: {
+			status: 400,
+			json: {
+				error: "Erro: Não existem documentos para o projeto solicitado",
+				code: "docsNotFound",
+			},
+		},
+		docIsntShared: {
+			status: 400,
+			json: {
+				error: "Erro: O documento não está sendo compartilhado com ninguem, nada a remover",
+				code: "docIsntShared",
+			},
+		},
+		docsSharedNotFound: {
+			status: 400,
+			json: {
+				error: "Erro: Não existem documentos compartilhados com o usuário",
+				code: "docsSharedNotFound",
+			},
+		},
+		cantShareWithSelf: {
+			status: 400,
+			json: {
+				error: "Erro: Não é possivel compartilhar o documento consigo mesmo",
+				code: "cantShareWithSelf",
+			},
+		},
+		notOwner: {
+			status: 403,
+			json: {
+				error: "Erro: O usuário logado não é dono do documento",
+				code: "notOwner",
+			},
+		},
+		contentFieldUndefined: {
+			status: 500,
+			json: {
+				error: "Erro: O campo conteúdo deve ser enviado, mesmo estando vazio",
+				code: "contentFieldUndefined",
+			},
+		},
+	},
+	success: {
+		documentCreated: {
+			status: 200,
+			json: {
+				success: "Sucesso: Documento criado com sucesso",
+				code: "documentCreated",
+			},
+		},
+		documentShared: {
+			status: 200,
+			json: {
+				success: "Sucesso: Documento compartilhado com sucesso",
+				code: "documentShared",
+			},
+		},
+		documentRevoked: {
+			status: 200,
+			json: {
+				success: "Sucesso: Acesso ao documento foi revogado com sucesso",
+				code: "documentRevoked",
+			},
+		},
+		documentNameUpdated: {
+			status: 200,
+			json: {
+				success: "Sucesso: Nome do documento foi atualizado com sucesso",
+				code: "documentNameUpdated",
+			},
+		},
+		documentDescUpdated: {
+			status: 200,
+			json: {
+				success: "Sucesso: Descrição do documento foi atualizado com sucesso",
+				code: "documentDescUpdated",
+			},
+		},
+		documentDeleted: {
+			status: 200,
+			json: {
+				success: "Sucesso: Documento foi deletado com sucesso",
+				code: "documentDeleted",
+			},
+		},
+		documentContentSaved: {
+			status: 200,
+			json: {
+				success: "Sucesso: O conteúdo do documento foi salvo",
+				code: "documentContentSaved",
 			},
 		},
 	},
