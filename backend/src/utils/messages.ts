@@ -7,6 +7,13 @@ export const systemMessages = {
 				code: "emptyValues",
 			},
 		},
+		notAllowed: {
+			status: 403,
+			json: {
+				error: "Erro: O usuário logado não tem permissão para acessar o conteudo",
+				code: "notAllowed",
+			},
+		},
 	},
 };
 
@@ -214,6 +221,7 @@ export const documentMessages = {
 				code: "notOwner",
 			},
 		},
+
 		contentFieldUndefined: {
 			status: 500,
 			json: {

@@ -300,10 +300,11 @@ export default class DocumentController {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
-		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
+		// Verifica se o documento pertence ao usuário compartilhado OU se o projeto pertence ao usuário logado, para dar permissões
+		const shared = await prisma.document.findFirst({ where: { AND: [{ sharedUserId: req.session.user.id }, { id: Number(documentId) }] } });
 		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id: Number(projectId) }] } });
-		if (!project) {
-			return ResponseSender.sendMessage(projErr.notOwner, req, res);
+		if (!project && !shared) {
+			return ResponseSender.sendMessage(sysErr.notAllowed, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
@@ -332,10 +333,11 @@ export default class DocumentController {
 			return ResponseSender.sendMessage(docErr.contentFieldUndefined, req, res);
 		}
 
-		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
+		// Verifica se o documento pertence ao usuário compartilhado OU se o projeto pertence ao usuário logado, para dar permissões
+		const shared = await prisma.document.findFirst({ where: { AND: [{ sharedUserId: req.session.user.id }, { id: Number(documentId) }] } });
 		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id: Number(projectId) }] } });
-		if (!project) {
-			return ResponseSender.sendMessage(projErr.notOwner, req, res);
+		if (!project && !shared) {
+			return ResponseSender.sendMessage(sysErr.notAllowed, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
