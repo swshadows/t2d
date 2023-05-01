@@ -77,7 +77,7 @@ export default class DocumentController {
 
 		// Procura documentos compartilhados com o usuário logado
 		const docs = await prisma.$queryRaw<Document[]>`
-			SELECT d.name as docName, d.desc as docDesc, p.name as projectName, p.desc as projectDesc, u.username as projectOwner FROM document d
+			SELECT d.id as docId, d.name as docName, d.desc as docDesc, p.name as projectName, p.desc as projectDesc, u.username as projectOwner FROM document d
 			INNER JOIN project p ON d.projectId = p.id
 			INNER JOIN user u ON p.userId = u.id WHERE sharedUserId = ${req.session.user.id}`;
 		if (!docs || !docs.length) {

@@ -1,4 +1,6 @@
 import express, { urlencoded } from "express";
+import { config } from "dotenv";
+config();
 const server = express();
 const port = process.env.PORT || 3000;
 
