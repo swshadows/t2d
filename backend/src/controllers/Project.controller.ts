@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import ResponseSender from "../utils/responseSender";
-import { projectMessages, systemMessages, userMessages } from "../utils/messages";
-import InvalidChecker from "../utils/invalidChecker";
+import ResponseSender from "../utils/ResponseSender";
+import { projectMessages, systemMessages, userMessages } from "../utils/Messages";
+import SystemUtils from "../utils/System.utils";
+import ProjectUtils from "../utils/Project.utils";
 
 const prisma = new PrismaClient();
 
@@ -10,15 +11,15 @@ const { error: projErr, success: projSuc } = projectMessages;
 const { error: userErr } = userMessages;
 const { error: sysErr } = systemMessages;
 
-export default class ProductController {
+export default class ProjectController {
 	static async getUserProjects(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
 			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
-		const projects = await prisma.project.findMany({ where: { userId: req.session.user.id }, select: { id: true, name: true, desc: true } });
 		// Checa se o usuário tem projetos
+		const projects = await prisma.project.findMany({ where: { userId: req.session.user.id }, select: { id: true, name: true, desc: true } });
 		if (!projects || !projects.length) {
 			return ResponseSender.sendMessage(projErr.projectsNotFound, req, res);
 		}
@@ -35,7 +36,7 @@ export default class ProductController {
 
 		// Checa se os dados enviados estão vazios
 		const { name, desc } = req.body;
-		if (InvalidChecker.isEmpty(name, desc)) {
+		if (SystemUtils.isEmpty(name, desc)) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
@@ -63,13 +64,13 @@ export default class ProductController {
 
 		// Checa se o nome e ID está vazio
 		const { name, id } = req.body;
-		if (InvalidChecker.isEmpty(name, id)) {
+		if (SystemUtils.isEmpty(name, id)) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
-		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id }] } });
-		if (!project) {
+		const isOwner = await ProjectUtils.isUserOwner(req.session.user, id, prisma);
+		if (!isOwner) {
 			return ResponseSender.sendMessage(projErr.notOwner, req, res);
 		}
 
@@ -97,13 +98,13 @@ export default class ProductController {
 
 		// Checa se a descrição e ID está vazio
 		const { desc, id } = req.body;
-		if (InvalidChecker.isEmpty(desc, id)) {
+		if (SystemUtils.isEmpty(desc, id)) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
-		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id }] } });
-		if (!project) {
+		const isOwner = await ProjectUtils.isUserOwner(req.session.user, id, prisma);
+		if (!isOwner) {
 			return ResponseSender.sendMessage(projErr.notOwner, req, res);
 		}
 
@@ -136,8 +137,8 @@ export default class ProductController {
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e deleção de projetos alheios
-		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id }] } });
-		if (!project) {
+		const isOwner = await ProjectUtils.isUserOwner(req.session.user, id, prisma);
+		if (!isOwner) {
 			return ResponseSender.sendMessage(projErr.notOwner, req, res);
 		}
 

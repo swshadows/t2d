@@ -1,9 +1,11 @@
-import { Request, Response, response } from "express";
-import ResponseSender from "../utils/responseSender";
+import { Request, Response } from "express";
+import ResponseSender from "../utils/ResponseSender";
 import { Document } from "@prisma/client";
-import { documentMessages, projectMessages, systemMessages, userMessages } from "../utils/messages";
-import InvalidChecker from "../utils/invalidChecker";
+import { documentMessages, projectMessages, systemMessages, userMessages } from "../utils/Messages";
+import SystemUtils from "../utils/System.utils";
 import { PrismaClient } from "@prisma/client";
+import ProjectUtils from "../utils/Project.utils";
+import DocumentUtils from "../utils/Document.utils";
 
 const prisma = new PrismaClient();
 
@@ -21,19 +23,19 @@ export default class DocumentController {
 
 		// Checa se o nome, descrição e ID está vazio
 		const { name, desc, projectId } = req.body;
-		if (InvalidChecker.isEmpty(name, desc, projectId)) {
+		if (SystemUtils.isEmpty(name, desc, projectId)) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
-		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id: projectId }] } });
+		const project = await ProjectUtils.isUserOwner(req.session.user, projectId, prisma);
 		if (!project) {
 			return ResponseSender.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Adiciona documento ao banco
 		await prisma.project.update({
-			where: { id: projectId },
+			where: { id: project.id },
 			data: {
 				docs: { create: { name, desc } },
 			},
@@ -50,18 +52,19 @@ export default class DocumentController {
 
 		// Checa se o ID do projeto foi informado no req.param
 		const { projectId } = req.params;
-		if (!projectId) {
+		const id = Number(projectId);
+		if (!id) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
-		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id: Number(projectId) }] } });
+		const project = await ProjectUtils.isUserOwner(req.session.user, id, prisma);
 		if (!project) {
 			return ResponseSender.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Verifica se existem documentos no projeto
-		const docs = await prisma.document.findMany({ where: { projectId: Number(projectId) }, select: { id: true, name: true, desc: true } });
+		const docs = await prisma.document.findMany({ where: { projectId: id }, select: { id: true, name: true, desc: true } });
 		if (!docs || !docs.length) {
 			return ResponseSender.sendMessage(docErr.docsNotFound, req, res);
 		}
@@ -95,7 +98,7 @@ export default class DocumentController {
 
 		// Verifica se foi enviado um nome de usuário e IDs
 		const { username, projectId, documentId } = req.body;
-		if (InvalidChecker.isEmpty(username, projectId, documentId)) {
+		if (SystemUtils.isEmpty(username, projectId, documentId)) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
@@ -111,13 +114,13 @@ export default class DocumentController {
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
-		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id: Number(projectId) }] } });
+		const project = await ProjectUtils.isUserOwner(req.session.user, projectId, prisma);
 		if (!project) {
 			return ResponseSender.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
-		const doc = await prisma.document.findFirst({ where: { AND: [{ projectId: Number(projectId) }, { id: documentId }] } });
+		const doc = await DocumentUtils.documentExists(projectId, documentId, prisma);
 		if (!doc) {
 			return ResponseSender.sendMessage(docErr.docNotFound, req, res);
 		}
@@ -155,18 +158,18 @@ export default class DocumentController {
 
 		// Verifica se foi enviado os IDs
 		const { projectId, documentId } = req.body;
-		if (InvalidChecker.isEmpty(projectId, documentId)) {
+		if (SystemUtils.isEmpty(projectId, documentId)) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
-		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id: Number(projectId) }] } });
+		const project = await ProjectUtils.isUserOwner(req.session.user, projectId, prisma);
 		if (!project) {
 			return ResponseSender.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
-		const doc = await prisma.document.findFirst({ where: { AND: [{ projectId: Number(projectId) }, { id: documentId }] } });
+		const doc = await DocumentUtils.documentExists(projectId, documentId, prisma);
 		if (!doc) {
 			return ResponseSender.sendMessage(docErr.docNotFound, req, res);
 		}
@@ -197,26 +200,26 @@ export default class DocumentController {
 
 		// Verifica se foi enviado o nome novo e IDs
 		const { name, projectId, documentId } = req.body;
-		if (InvalidChecker.isEmpty(name, projectId, documentId)) {
+		if (SystemUtils.isEmpty(name, projectId, documentId)) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
-		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id: Number(projectId) }] } });
+		const project = await ProjectUtils.isUserOwner(req.session.user, projectId, prisma);
 		if (!project) {
 			return ResponseSender.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
-		const doc = await prisma.document.findFirst({ where: { AND: [{ projectId: Number(projectId) }, { id: documentId }] } });
+		const doc = await DocumentUtils.documentExists(projectId, documentId, prisma);
 		if (!doc) {
 			return ResponseSender.sendMessage(docErr.docNotFound, req, res);
 		}
 
 		// Atualiza o nome do documento
 		await prisma.project.update({
-			where: { id: projectId },
-			data: { docs: { update: { where: { id: documentId }, data: { name } } } },
+			where: { id: project.id },
+			data: { docs: { update: { where: { id: doc.id }, data: { name } } } },
 		});
 
 		ResponseSender.sendMessage(docSuc.documentNameUpdated, req, res);
@@ -230,26 +233,26 @@ export default class DocumentController {
 
 		// Verifica se foi enviado a descrição nova e IDs
 		const { desc, projectId, documentId } = req.body;
-		if (InvalidChecker.isEmpty(desc, projectId, documentId)) {
+		if (SystemUtils.isEmpty(desc, projectId, documentId)) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
-		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id: Number(projectId) }] } });
+		const project = await ProjectUtils.isUserOwner(req.session.user, projectId, prisma);
 		if (!project) {
 			return ResponseSender.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
-		const doc = await prisma.document.findFirst({ where: { AND: [{ projectId: Number(projectId) }, { id: documentId }] } });
+		const doc = await DocumentUtils.documentExists(projectId, documentId, prisma);
 		if (!doc) {
 			return ResponseSender.sendMessage(docErr.docNotFound, req, res);
 		}
 
 		// Atualiza a descrição do documento
 		await prisma.project.update({
-			where: { id: projectId },
-			data: { docs: { update: { where: { id: documentId }, data: { desc } } } },
+			where: { id: project.id },
+			data: { docs: { update: { where: { id: doc.id }, data: { desc } } } },
 		});
 
 		ResponseSender.sendMessage(docSuc.documentDescUpdated, req, res);
@@ -263,26 +266,26 @@ export default class DocumentController {
 
 		// Verifica se foi enviado os IDs
 		const { projectId, documentId } = req.body;
-		if (InvalidChecker.isEmpty(projectId, documentId)) {
+		if (SystemUtils.isEmpty(projectId, documentId)) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
-		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id: Number(projectId) }] } });
+		const project = await ProjectUtils.isUserOwner(req.session.user, projectId, prisma);
 		if (!project) {
 			return ResponseSender.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
-		const doc = await prisma.document.findFirst({ where: { AND: [{ projectId: Number(projectId) }, { id: documentId }] } });
+		const doc = await DocumentUtils.documentExists(projectId, documentId, prisma);
 		if (!doc) {
 			return ResponseSender.sendMessage(docErr.docNotFound, req, res);
 		}
 
 		// Deleta o documento
 		await prisma.project.update({
-			where: { id: projectId },
-			data: { docs: { delete: { id: documentId } } },
+			where: { id: project.id },
+			data: { docs: { delete: { id: doc.id } } },
 		});
 
 		ResponseSender.sendMessage(docSuc.documentDeleted, req, res);
@@ -296,19 +299,20 @@ export default class DocumentController {
 
 		// Verifica se foi enviado os IDs
 		const { projectId, documentId } = req.params;
-		if (InvalidChecker.isEmpty(projectId, documentId)) {
+		const projId = Number(projectId);
+		const docId = Number(documentId);
+		if (SystemUtils.isEmpty(projId, docId)) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o documento pertence ao usuário compartilhado OU se o projeto pertence ao usuário logado, para dar permissões
-		const shared = await prisma.document.findFirst({ where: { AND: [{ sharedUserId: req.session.user.id }, { id: Number(documentId) }] } });
-		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id: Number(projectId) }] } });
-		if (!project && !shared) {
+		const perms = await DocumentUtils.documentIsSharedOrOwned(req.session.user, projId, docId, prisma);
+		if (!perms) {
 			return ResponseSender.sendMessage(sysErr.notAllowed, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
-		const doc = await prisma.document.findFirst({ where: { AND: [{ projectId: Number(projectId) }, { id: Number(documentId) }] } });
+		const doc = await DocumentUtils.documentExists(projId, docId, prisma);
 		if (!doc) {
 			return ResponseSender.sendMessage(docErr.docNotFound, req, res);
 		}
@@ -324,7 +328,7 @@ export default class DocumentController {
 
 		// Verifica se foi enviado os IDs
 		const { content, projectId, documentId } = req.body;
-		if (InvalidChecker.isEmpty(projectId, documentId)) {
+		if (SystemUtils.isEmpty(projectId, documentId)) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
@@ -334,14 +338,13 @@ export default class DocumentController {
 		}
 
 		// Verifica se o documento pertence ao usuário compartilhado OU se o projeto pertence ao usuário logado, para dar permissões
-		const shared = await prisma.document.findFirst({ where: { AND: [{ sharedUserId: req.session.user.id }, { id: Number(documentId) }] } });
-		const project = await prisma.project.findFirst({ where: { AND: [{ userId: req.session.user.id }, { id: Number(projectId) }] } });
-		if (!project && !shared) {
+		const perms = await DocumentUtils.documentIsSharedOrOwned(req.session.user, projectId, documentId, prisma);
+		if (!perms) {
 			return ResponseSender.sendMessage(sysErr.notAllowed, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
-		const doc = await prisma.document.findFirst({ where: { AND: [{ projectId: Number(projectId) }, { id: Number(documentId) }] } });
+		const doc = await DocumentUtils.documentExists(projectId, documentId, prisma);
 		if (!doc) {
 			return ResponseSender.sendMessage(docErr.docNotFound, req, res);
 		}

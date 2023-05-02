@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { systemMessages, userMessages } from "../utils/messages";
-import ResponseSender from "../utils/responseSender";
-import InvalidChecker from "../utils/invalidChecker";
-import UserUtils from "./User.utils";
+import { systemMessages, userMessages } from "../utils/Messages";
+import ResponseSender from "../utils/ResponseSender";
+import SystemUtils from "../utils/System.utils";
+import UserUtils from "../utils/User.utils";
 
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
@@ -21,7 +21,7 @@ export default class UserController {
 		const { email, username, password, passwordRepeat } = req.body;
 
 		// Checa se há valores vazios no req.body
-		if (InvalidChecker.isEmpty(email, username, password, passwordRepeat)) {
+		if (SystemUtils.isEmpty(email, username, password, passwordRepeat)) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
@@ -72,7 +72,7 @@ export default class UserController {
 		const { login, password } = req.body;
 
 		// Checa se há valores vazios no req.body
-		if (InvalidChecker.isEmpty(login, password)) {
+		if (SystemUtils.isEmpty(login, password)) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
@@ -194,7 +194,7 @@ export default class UserController {
 
 		// Checa se há valores nos campos de senha vazios
 		const { password, newPassword, newPasswordRepeat } = req.body;
-		if (InvalidChecker.isEmpty(password, newPassword, newPasswordRepeat)) {
+		if (SystemUtils.isEmpty(password, newPassword, newPasswordRepeat)) {
 			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
 		}
 
