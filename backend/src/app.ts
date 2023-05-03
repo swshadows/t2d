@@ -10,7 +10,7 @@ server.use(express.json());
 
 // Session
 import session from "express-session";
-import "./types/session";
+import "./types/Session.type";
 server.use(
 	session({
 		secret: String(process.env.SESSION_SECRET),
@@ -20,9 +20,9 @@ server.use(
 );
 
 // Routes
-import userRoutes from "./routes/userRoutes";
-import projectRoutes from "./routes/projectRoutes";
-import docRoutes from "./routes/documentRoutes";
+import userRoutes from "./routes/User.routes";
+import projectRoutes from "./routes/Project.routes";
+import docRoutes from "./routes/Document.routes";
 server.use("/user", userRoutes);
 server.use("/project", projectRoutes);
 server.use("/doc", docRoutes);

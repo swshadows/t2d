@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import ResponseSender from "../utils/ResponseSender";
+import ResponseUtils from "../utils/Response.utils";
 import { Document } from "@prisma/client";
-import { documentMessages, projectMessages, systemMessages, userMessages } from "../utils/Messages";
+import { documentMessages, projectMessages, systemMessages, userMessages } from "../utils/Message.utils";
 import SystemUtils from "../utils/System.utils";
 import { PrismaClient } from "@prisma/client";
 import ProjectUtils from "../utils/Project.utils";
@@ -18,19 +18,19 @@ export default class DocumentController {
 	static async createDocument(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
 		// Checa se o nome, descrição e ID está vazio
 		const { name, desc, projectId } = req.body;
 		if (SystemUtils.isEmpty(name, desc, projectId)) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
 		const project = await ProjectUtils.isUserOwner(req.session.user, projectId, prisma);
 		if (!project) {
-			return ResponseSender.sendMessage(projErr.notOwner, req, res);
+			return ResponseUtils.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Adiciona documento ao banco
@@ -41,32 +41,32 @@ export default class DocumentController {
 			},
 		});
 
-		ResponseSender.sendMessage(docSuc.documentCreated, req, res);
+		ResponseUtils.sendMessage(docSuc.documentCreated, req, res);
 	}
 
 	static async getProjectDocs(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
 		// Checa se o ID do projeto foi informado no req.param
 		const { projectId } = req.params;
 		const id = Number(projectId);
 		if (!id) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
 		const project = await ProjectUtils.isUserOwner(req.session.user, id, prisma);
 		if (!project) {
-			return ResponseSender.sendMessage(projErr.notOwner, req, res);
+			return ResponseUtils.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Verifica se existem documentos no projeto
 		const docs = await prisma.document.findMany({ where: { projectId: id }, select: { id: true, name: true, desc: true } });
 		if (!docs || !docs.length) {
-			return ResponseSender.sendMessage(docErr.docsNotFound, req, res);
+			return ResponseUtils.sendMessage(docErr.docsNotFound, req, res);
 		}
 
 		res.status(200).json(docs);
@@ -75,7 +75,7 @@ export default class DocumentController {
 	static async getSharedDocs(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
 		// Procura documentos compartilhados com o usuário logado
@@ -84,7 +84,7 @@ export default class DocumentController {
 			INNER JOIN project p ON d.projectId = p.id
 			INNER JOIN user u ON p.userId = u.id WHERE sharedUserId = ${req.session.user.id}`;
 		if (!docs || !docs.length) {
-			return ResponseSender.sendMessage(docErr.docsSharedNotFound, req, res);
+			return ResponseUtils.sendMessage(docErr.docsSharedNotFound, req, res);
 		}
 
 		res.status(200).json(docs);
@@ -93,36 +93,36 @@ export default class DocumentController {
 	static async shareDoc(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
 		// Verifica se foi enviado um nome de usuário e IDs
 		const { username, projectId, documentId } = req.body;
 		if (SystemUtils.isEmpty(username, projectId, documentId)) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Checa se o usuário enviado é diferente do logado
 		if (req.session.user.username == username) {
-			return ResponseSender.sendMessage(docErr.cantShareWithSelf, req, res);
+			return ResponseUtils.sendMessage(docErr.cantShareWithSelf, req, res);
 		}
 
 		// Verifica se o usuário existe
 		const user = await prisma.user.findUnique({ where: { username } });
 		if (!user) {
-			return ResponseSender.sendMessage(userErr.userNotFound, req, res);
+			return ResponseUtils.sendMessage(userErr.userNotFound, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
 		const project = await ProjectUtils.isUserOwner(req.session.user, projectId, prisma);
 		if (!project) {
-			return ResponseSender.sendMessage(projErr.notOwner, req, res);
+			return ResponseUtils.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
 		const doc = await DocumentUtils.documentExists(projectId, documentId, prisma);
 		if (!doc) {
-			return ResponseSender.sendMessage(docErr.docNotFound, req, res);
+			return ResponseUtils.sendMessage(docErr.docNotFound, req, res);
 		}
 
 		// Remove o acesso ao usuário para transferir para o outro
@@ -147,36 +147,36 @@ export default class DocumentController {
 			},
 		});
 
-		ResponseSender.sendMessage(docSuc.documentShared, req, res);
+		ResponseUtils.sendMessage(docSuc.documentShared, req, res);
 	}
 
 	static async removeShare(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
 		// Verifica se foi enviado os IDs
 		const { projectId, documentId } = req.body;
 		if (SystemUtils.isEmpty(projectId, documentId)) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
 		const project = await ProjectUtils.isUserOwner(req.session.user, projectId, prisma);
 		if (!project) {
-			return ResponseSender.sendMessage(projErr.notOwner, req, res);
+			return ResponseUtils.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
 		const doc = await DocumentUtils.documentExists(projectId, documentId, prisma);
 		if (!doc) {
-			return ResponseSender.sendMessage(docErr.docNotFound, req, res);
+			return ResponseUtils.sendMessage(docErr.docNotFound, req, res);
 		}
 
 		// Verifica se o documento está sendo realmente compartilhado com alguém
 		if (!doc.sharedUserId) {
-			return ResponseSender.sendMessage(docErr.docIsntShared, req, res);
+			return ResponseUtils.sendMessage(docErr.docIsntShared, req, res);
 		}
 
 		// Remove o acesso
@@ -189,31 +189,31 @@ export default class DocumentController {
 			},
 		});
 
-		ResponseSender.sendMessage(docSuc.documentRevoked, req, res);
+		ResponseUtils.sendMessage(docSuc.documentRevoked, req, res);
 	}
 
 	static async updateName(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
 		// Verifica se foi enviado o nome novo e IDs
 		const { name, projectId, documentId } = req.body;
 		if (SystemUtils.isEmpty(name, projectId, documentId)) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
 		const project = await ProjectUtils.isUserOwner(req.session.user, projectId, prisma);
 		if (!project) {
-			return ResponseSender.sendMessage(projErr.notOwner, req, res);
+			return ResponseUtils.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
 		const doc = await DocumentUtils.documentExists(projectId, documentId, prisma);
 		if (!doc) {
-			return ResponseSender.sendMessage(docErr.docNotFound, req, res);
+			return ResponseUtils.sendMessage(docErr.docNotFound, req, res);
 		}
 
 		// Atualiza o nome do documento
@@ -222,31 +222,31 @@ export default class DocumentController {
 			data: { docs: { update: { where: { id: doc.id }, data: { name } } } },
 		});
 
-		ResponseSender.sendMessage(docSuc.documentNameUpdated, req, res);
+		ResponseUtils.sendMessage(docSuc.documentNameUpdated, req, res);
 	}
 
 	static async updateDescription(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
 		// Verifica se foi enviado a descrição nova e IDs
 		const { desc, projectId, documentId } = req.body;
 		if (SystemUtils.isEmpty(desc, projectId, documentId)) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
 		const project = await ProjectUtils.isUserOwner(req.session.user, projectId, prisma);
 		if (!project) {
-			return ResponseSender.sendMessage(projErr.notOwner, req, res);
+			return ResponseUtils.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
 		const doc = await DocumentUtils.documentExists(projectId, documentId, prisma);
 		if (!doc) {
-			return ResponseSender.sendMessage(docErr.docNotFound, req, res);
+			return ResponseUtils.sendMessage(docErr.docNotFound, req, res);
 		}
 
 		// Atualiza a descrição do documento
@@ -255,31 +255,31 @@ export default class DocumentController {
 			data: { docs: { update: { where: { id: doc.id }, data: { desc } } } },
 		});
 
-		ResponseSender.sendMessage(docSuc.documentDescUpdated, req, res);
+		ResponseUtils.sendMessage(docSuc.documentDescUpdated, req, res);
 	}
 
 	static async deleteDocument(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
 		// Verifica se foi enviado os IDs
 		const { projectId, documentId } = req.body;
 		if (SystemUtils.isEmpty(projectId, documentId)) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
 		const project = await ProjectUtils.isUserOwner(req.session.user, projectId, prisma);
 		if (!project) {
-			return ResponseSender.sendMessage(projErr.notOwner, req, res);
+			return ResponseUtils.sendMessage(projErr.notOwner, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
 		const doc = await DocumentUtils.documentExists(projectId, documentId, prisma);
 		if (!doc) {
-			return ResponseSender.sendMessage(docErr.docNotFound, req, res);
+			return ResponseUtils.sendMessage(docErr.docNotFound, req, res);
 		}
 
 		// Deleta o documento
@@ -288,13 +288,13 @@ export default class DocumentController {
 			data: { docs: { delete: { id: doc.id } } },
 		});
 
-		ResponseSender.sendMessage(docSuc.documentDeleted, req, res);
+		ResponseUtils.sendMessage(docSuc.documentDeleted, req, res);
 	}
 
 	static async docGetContent(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
 		// Verifica se foi enviado os IDs
@@ -302,19 +302,19 @@ export default class DocumentController {
 		const projId = Number(projectId);
 		const docId = Number(documentId);
 		if (SystemUtils.isEmpty(projId, docId)) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se o documento pertence ao usuário compartilhado OU se o projeto pertence ao usuário logado, para dar permissões
 		const perms = await DocumentUtils.documentIsSharedOrOwned(req.session.user, projId, docId, prisma);
 		if (!perms) {
-			return ResponseSender.sendMessage(sysErr.notAllowed, req, res);
+			return ResponseUtils.sendMessage(sysErr.notAllowed, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
 		const doc = await DocumentUtils.documentExists(projId, docId, prisma);
 		if (!doc) {
-			return ResponseSender.sendMessage(docErr.docNotFound, req, res);
+			return ResponseUtils.sendMessage(docErr.docNotFound, req, res);
 		}
 
 		res.status(200).json(doc);
@@ -323,35 +323,35 @@ export default class DocumentController {
 	static async docSaveContent(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
 		// Verifica se foi enviado os IDs
 		const { content, projectId, documentId } = req.body;
 		if (SystemUtils.isEmpty(projectId, documentId)) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Verifica se content existe, levando em consideração o seu tamanho 0, sendo opcional
 		if (content == undefined) {
-			return ResponseSender.sendMessage(docErr.contentFieldUndefined, req, res);
+			return ResponseUtils.sendMessage(docErr.contentFieldUndefined, req, res);
 		}
 
 		// Verifica se o documento pertence ao usuário compartilhado OU se o projeto pertence ao usuário logado, para dar permissões
 		const perms = await DocumentUtils.documentIsSharedOrOwned(req.session.user, projectId, documentId, prisma);
 		if (!perms) {
-			return ResponseSender.sendMessage(sysErr.notAllowed, req, res);
+			return ResponseUtils.sendMessage(sysErr.notAllowed, req, res);
 		}
 
 		// Verifica se o documento requisitado existe no projeto
 		const doc = await DocumentUtils.documentExists(projectId, documentId, prisma);
 		if (!doc) {
-			return ResponseSender.sendMessage(docErr.docNotFound, req, res);
+			return ResponseUtils.sendMessage(docErr.docNotFound, req, res);
 		}
 
 		// Pega o conteudo e atualiza
 		await prisma.document.update({ where: { id: projectId }, data: { content } });
 
-		ResponseSender.sendMessage(docSuc.documentContentSaved, req, res);
+		ResponseUtils.sendMessage(docSuc.documentContentSaved, req, res);
 	}
 }

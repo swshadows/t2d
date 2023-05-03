@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { User } from "../types/session";
+import { User } from "../types/Session.type";
 
 export default class DocumentUtils {
 	// Checa se o documento existe em determinado projeto

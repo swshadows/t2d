@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { User } from "../types/session";
+import { User } from "../types/Session.type";
 
 export default class ProjectUtils {
 	// Checa se o usuário logado é o dono do projeto

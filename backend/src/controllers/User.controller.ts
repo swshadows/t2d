@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { systemMessages, userMessages } from "../utils/Messages";
-import ResponseSender from "../utils/ResponseSender";
+import { systemMessages, userMessages } from "../utils/Message.utils";
+import ResponseUtils from "../utils/Response.utils";
 import SystemUtils from "../utils/System.utils";
 import UserUtils from "../utils/User.utils";
 
@@ -15,40 +15,40 @@ export default class UserController {
 	static async registerUser(req: Request, res: Response): Promise<void> {
 		// Checa se o usuário já está logado
 		if (req.session.user) {
-			return ResponseSender.sendMessage(userErr.alreadyLogged, req, res);
+			return ResponseUtils.sendMessage(userErr.alreadyLogged, req, res);
 		}
 
 		const { email, username, password, passwordRepeat } = req.body;
 
 		// Checa se há valores vazios no req.body
 		if (SystemUtils.isEmpty(email, username, password, passwordRepeat)) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Valida email usando RegEx
 		if (!UserUtils.isEmailValid(email)) {
-			return ResponseSender.sendMessage(userErr.invalidEmailRegex, req, res);
+			return ResponseUtils.sendMessage(userErr.invalidEmailRegex, req, res);
 		}
 
 		// Checa se as senhas enviadas são iguais
 		if (!UserUtils.arePasswordsEqual(password, passwordRepeat)) {
-			return ResponseSender.sendMessage(userErr.diffPasswords, req, res);
+			return ResponseUtils.sendMessage(userErr.diffPasswords, req, res);
 		}
 
 		// Checa se a senha é forte
 		if (!UserUtils.isPasswordValid(password)) {
-			return ResponseSender.sendMessage(userErr.passwordTooWeak, req, res);
+			return ResponseUtils.sendMessage(userErr.passwordTooWeak, req, res);
 		}
 
 		// Verifica se email e/ou usuário já existem
 		const findEmail = await prisma.user.findUnique({ where: { email } });
 		if (findEmail) {
-			return ResponseSender.sendMessage(userErr.emailExists, req, res);
+			return ResponseUtils.sendMessage(userErr.emailExists, req, res);
 		}
 
 		const findUsername = await prisma.user.findUnique({ where: { username } });
 		if (findUsername) {
-			return ResponseSender.sendMessage(userErr.usernameExists, req, res);
+			return ResponseUtils.sendMessage(userErr.usernameExists, req, res);
 		}
 
 		// Insere usuário no banco de dados
@@ -60,32 +60,32 @@ export default class UserController {
 			},
 		});
 
-		ResponseSender.sendMessage(userSuc.userCreated, req, res);
+		ResponseUtils.sendMessage(userSuc.userCreated, req, res);
 	}
 
 	static async loginUser(req: Request, res: Response): Promise<void> {
 		// Checa se o usuário já está logado
 		if (req.session.user) {
-			return ResponseSender.sendMessage(userErr.alreadyLogged, req, res);
+			return ResponseUtils.sendMessage(userErr.alreadyLogged, req, res);
 		}
 
 		const { login, password } = req.body;
 
 		// Checa se há valores vazios no req.body
 		if (SystemUtils.isEmpty(login, password)) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Checa se o usuário existe, usando email ou username
 		const findUser = await prisma.user.findFirst({ where: { OR: [{ email: login }, { username: login }] } });
 
 		if (!findUser) {
-			return ResponseSender.sendMessage(userErr.userNotFound, req, res);
+			return ResponseUtils.sendMessage(userErr.userNotFound, req, res);
 		}
 
 		// Checa se a senha enviada está correta
 		if (!UserUtils.isPasswordCorrect(password, findUser.password)) {
-			return ResponseSender.sendMessage(userErr.passwordWrong, req, res);
+			return ResponseUtils.sendMessage(userErr.passwordWrong, req, res);
 		}
 
 		// Cria a sessão
@@ -95,13 +95,13 @@ export default class UserController {
 			username: findUser.username,
 		};
 
-		ResponseSender.sendMessage(userSuc.userLogged, req, res);
+		ResponseUtils.sendMessage(userSuc.userLogged, req, res);
 	}
 
 	static logoutUser(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
 		// Destroi a sessão, fazendo logout
@@ -109,25 +109,25 @@ export default class UserController {
 			if (err) throw err;
 		});
 
-		ResponseSender.sendMessage(userSuc.userLogout, req, res);
+		ResponseUtils.sendMessage(userSuc.userLogout, req, res);
 	}
 
 	static async getUser(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
 		// Checa se foi enviado o nome do usuário
 		const { username } = req.params;
 		if (!username) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Procura o usuário de acordo com o req.param enviado
 		const user = await prisma.user.findUnique({ where: { username }, select: { username: true, email: true } });
 		if (!user) {
-			return ResponseSender.sendMessage(userErr.userNotFound, req, res);
+			return ResponseUtils.sendMessage(userErr.userNotFound, req, res);
 		}
 
 		res.status(200).json(user);
@@ -136,96 +136,96 @@ export default class UserController {
 	static async updateEmail(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 		const { email } = req.body;
 		// Checa se o email está preenchido
 		if (!email) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Checa se o regex do email é válido
 		if (!UserUtils.isEmailValid(email)) {
-			return ResponseSender.sendMessage(userErr.invalidEmailRegex, req, res);
+			return ResponseUtils.sendMessage(userErr.invalidEmailRegex, req, res);
 		}
 
 		// Checa se o email já está em uso
 		const findEmail = await prisma.user.findUnique({ where: { email } });
 		if (findEmail) {
-			return ResponseSender.sendMessage(userErr.emailExists, req, res);
+			return ResponseUtils.sendMessage(userErr.emailExists, req, res);
 		}
 
 		// Atualiza o email
 		await prisma.user.update({ where: { email: req.session.user.email }, data: { email: email } });
 		req.session.user.email = email;
 
-		ResponseSender.sendMessage(userSuc.emailUpdated, req, res);
+		ResponseUtils.sendMessage(userSuc.emailUpdated, req, res);
 	}
 
 	static async updateUsername(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 		const { username } = req.body;
 		// Checa se o nome de usuário está preenchido
 		if (!username) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Checa se o nome de usuário já está em uso
 		const findUsername = await prisma.user.findUnique({ where: { username } });
 		if (findUsername) {
-			return ResponseSender.sendMessage(userErr.usernameExists, req, res);
+			return ResponseUtils.sendMessage(userErr.usernameExists, req, res);
 		}
 
 		// Atualiza o nome de usuário
 		await prisma.user.update({ where: { username: req.session.user.username }, data: { username: username } });
 		req.session.user.username = username;
 
-		ResponseSender.sendMessage(userSuc.usernameUpdated, req, res);
+		ResponseUtils.sendMessage(userSuc.usernameUpdated, req, res);
 	}
 
 	static async updatePassword(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
 		// Checa se há valores nos campos de senha vazios
 		const { password, newPassword, newPasswordRepeat } = req.body;
 		if (SystemUtils.isEmpty(password, newPassword, newPasswordRepeat)) {
-			return ResponseSender.sendMessage(sysErr.emptyValues, req, res);
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Compara as 2 novas senhas enviadas
 		if (!UserUtils.arePasswordsEqual(newPassword, newPasswordRepeat)) {
-			return ResponseSender.sendMessage(userErr.diffPasswords, req, res);
+			return ResponseUtils.sendMessage(userErr.diffPasswords, req, res);
 		}
 
 		// Checa se a senha é forte
 		if (!UserUtils.isPasswordValid(password)) {
-			return ResponseSender.sendMessage(userErr.passwordTooWeak, req, res);
+			return ResponseUtils.sendMessage(userErr.passwordTooWeak, req, res);
 		}
 
 		// Compara a senha enviada com a senha no banco
 		const findUser = await prisma.user.findUnique({ where: { email: req.session.user.email } });
 		if (!findUser) {
-			return ResponseSender.sendMessage(userErr.userNotFound, req, res);
+			return ResponseUtils.sendMessage(userErr.userNotFound, req, res);
 		}
 		if (!UserUtils.isPasswordCorrect(password, findUser.password)) {
-			return ResponseSender.sendMessage(userErr.passwordWrong, req, res);
+			return ResponseUtils.sendMessage(userErr.passwordWrong, req, res);
 		}
 
 		// Atualiza a senha
 		await prisma.user.update({ where: { email: req.session.user.email }, data: { password: bcrypt.hashSync(newPassword, 10) } });
-		ResponseSender.sendMessage(userSuc.passwordUpdated, req, res);
+		ResponseUtils.sendMessage(userSuc.passwordUpdated, req, res);
 	}
 
 	static async deleteUser(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {
-			return ResponseSender.sendMessage(userErr.notLoggedYet, req, res);
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
 		}
 
 		// Apaga o usuário do banco
@@ -236,6 +236,6 @@ export default class UserController {
 			if (err) throw err;
 		});
 
-		ResponseSender.sendMessage(userSuc.userDeleted, req, res);
+		ResponseUtils.sendMessage(userSuc.userDeleted, req, res);
 	}
 }
