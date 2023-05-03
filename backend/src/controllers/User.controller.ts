@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { systemMessages, userMessages } from "../utils/Message.utils";
-import ResponseUtils from "../utils/Response.utils";
+
+import ResponseUtils, { Messages } from "../utils/Response.utils";
 import SystemUtils from "../utils/System.utils";
 import UserUtils from "../utils/User.utils";
 
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-const { error: userErr, success: userSuc } = userMessages;
-const { error: sysErr } = systemMessages;
+const { error: userErr, success: userSuc } = Messages.userMessages;
+const { error: sysErr } = Messages.systemMessages;
 
 export default class UserController {
 	static async registerUser(req: Request, res: Response): Promise<void> {

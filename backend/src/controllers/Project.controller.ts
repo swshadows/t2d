@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-import ResponseUtils from "../utils/Response.utils";
-import { projectMessages, systemMessages, userMessages } from "../utils/Message.utils";
+
+import ResponseUtils, { Messages } from "../utils/Response.utils";
 import SystemUtils from "../utils/System.utils";
 import ProjectUtils from "../utils/Project.utils";
 
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-const { error: projErr, success: projSuc } = projectMessages;
-const { error: userErr } = userMessages;
-const { error: sysErr } = systemMessages;
+const { error: projErr, success: projSuc } = Messages.projectMessages;
+const { error: userErr } = Messages.userMessages;
+const { error: sysErr } = Messages.systemMessages;
 
 export default class ProjectController {
 	static async getUserProjects(req: Request, res: Response) {

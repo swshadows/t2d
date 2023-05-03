@@ -1,18 +1,17 @@
 import { Request, Response } from "express";
-import ResponseUtils from "../utils/Response.utils";
-import { Document } from "@prisma/client";
-import { documentMessages, projectMessages, systemMessages, userMessages } from "../utils/Message.utils";
+
+import ResponseUtils, { Messages } from "../utils/Response.utils";
 import SystemUtils from "../utils/System.utils";
-import { PrismaClient } from "@prisma/client";
 import ProjectUtils from "../utils/Project.utils";
 import DocumentUtils from "../utils/Document.utils";
 
+import { Document, PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-const { error: userErr } = userMessages;
-const { error: sysErr } = systemMessages;
-const { error: projErr } = projectMessages;
-const { error: docErr, success: docSuc } = documentMessages;
+const { error: userErr } = Messages.userMessages;
+const { error: sysErr } = Messages.systemMessages;
+const { error: projErr } = Messages.projectMessages;
+const { error: docErr, success: docSuc } = Messages.documentMessages;
 
 export default class DocumentController {
 	static async createDocument(req: Request, res: Response) {
