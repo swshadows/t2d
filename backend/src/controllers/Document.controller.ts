@@ -349,7 +349,7 @@ export default class DocumentController {
 		}
 
 		// Pega o conteudo e atualiza
-		await prisma.document.update({ where: { id: projectId }, data: { content } });
+		await prisma.document.update({ where: { id: doc.id }, data: { content } });
 
 		ResponseUtils.sendMessage(docSuc.documentContentSaved, req, res);
 	}
