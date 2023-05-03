@@ -1,8 +1,6 @@
 import express, { urlencoded } from "express";
 import { config } from "dotenv";
 config();
-
-// Iniciando variáveis de servidor
 const server = express();
 const port = process.env.PORT || 3000;
 
@@ -12,7 +10,7 @@ server.use(express.json());
 
 // Session
 import session from "express-session";
-import "./types/Session.type";
+import "./types/session";
 server.use(
 	session({
 		secret: String(process.env.SESSION_SECRET),
@@ -22,9 +20,9 @@ server.use(
 );
 
 // Routes
-import userRoutes from "./routes/User.routes";
-import projectRoutes from "./routes/Project.routes";
-import docRoutes from "./routes/Document.routes";
+import userRoutes from "./routes/userRoutes";
+import projectRoutes from "./routes/projectRoutes";
+import docRoutes from "./routes/documentRoutes";
 server.use("/user", userRoutes);
 server.use("/project", projectRoutes);
 server.use("/doc", docRoutes);

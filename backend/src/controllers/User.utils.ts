@@ -1,3 +1,4 @@
+import { Request } from "express";
 import bcrypt from "bcrypt";
 
 export default class UserUtils {
