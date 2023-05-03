@@ -1,8 +1,15 @@
-<script setup lang="ts"></script>
-
 <template>
-	<div>
-		<h1>Frontend</h1>
-		<RouterView />
-	</div>
+  <div>
+   <!-- <MenuTemplate /> -->
+   <router-view></router-view>
+  </div>
+  
 </template>
+
+<script setup lang="ts">
+// import MenuTemplate from './components/MenuTemplate.vue'
+
+</script>
+
+
+
