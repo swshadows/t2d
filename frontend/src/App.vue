@@ -1,8 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Header from "@/components/Header.vue";
+import Footer from "./components/Footer.vue";
+</script>
 
 <template>
-	<div>
-		<h1>Frontend</h1>
-		<RouterView />
-	</div>
+	<Header />
+	<RouterView />
+	<Footer />
 </template>

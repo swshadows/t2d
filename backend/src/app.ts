@@ -1,5 +1,6 @@
 import express, { urlencoded } from "express";
 import { config } from "dotenv";
+import cors from "cors";
 config();
 
 // Iniciando variáveis de servidor
@@ -9,6 +10,7 @@ const port = process.env.PORT || 3000;
 // Server middlewares
 server.use(urlencoded({ extended: false }));
 server.use(express.json());
+server.use(cors());
 
 // Session
 import session from "express-session";

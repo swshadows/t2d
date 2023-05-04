@@ -6,12 +6,12 @@
 
 ## Equipe de Desenvolvimento
 
-| Nome                                                  | Funções             |
-| :---------------------------------------------------- | :------------------ |
-| [swshadows](https://github.com/swshadows)             | 🎲 Backend & Design |
-| [leonardosilva97](https://github.com/leonardosilva97) | 🎲                  |
-| [EndrewDias](https://github.com/EndrewDias)           | 🎲                  |
-| [David-TM12](https://github.com/David-TM12)           | 🎲                  |
+| Nome                                                  | Funções               |
+| :---------------------------------------------------- | :-------------------- |
+| [swshadows](https://github.com/swshadows)             | 🎲 Fullstack & Design |
+| [leonardosilva97](https://github.com/leonardosilva97) | 🎲 Suporte Frontend   |
+| [EndrewDias](https://github.com/EndrewDias)           | 🎲 Suporte Frontend   |
+| [David-TM12](https://github.com/David-TM12)           | 🎲 Suporte Backend    |
 
 ## Inicialização
 
@@ -50,7 +50,19 @@
 
 #### Frontend
 
-- [ ] TODO: Todo resto dos comandos de inicialização
+- Crie um arquivo em `frontend` chamado `.env`
+
+  ```bash
+  VITE_API_URL="http://localhost:3000" # O endereço que o backend está rodando
+  ```
+
+- Rode os seguintes comandos
+
+  ```bash
+  cd ./frontend   # Acessa a pasta do frontend
+  npm install     # Instala as dependências
+  npm run dev     # Inicializa o servidor Vue com Vite
+  ```
 
 ### Outros Links
 
