@@ -63,9 +63,9 @@ function toggleDelete() {
 </script>
 
 <template>
-	<div class="app">
-		<SpinnerLoad v-if="!userStore.getUserStore.email" />
-		<div v-else>
+	<SpinnerLoad v-if="!userStore.getUserStore.email" />
+	<div v-else class="app">
+		<div class="forms">
 			<form @submit.prevent="validateForms('email')">
 				<Input
 					@emit-values="email = $event"
@@ -133,7 +133,7 @@ function toggleDelete() {
 
 .app {
 	color: #fff;
-	width: 1000px;
+	width: 80%;
 	padding: 20px 10px;
 	background: $secondary;
 	border-radius: 7px;
@@ -146,6 +146,9 @@ function toggleDelete() {
 	align-items: center;
 	justify-content: center;
 	gap: 20px;
+}
+.forms {
+	width: 50%;
 }
 form,
 .wrapper {

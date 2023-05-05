@@ -22,7 +22,7 @@ let inputValue = "";
 input {
 	background: rgba(149, 149, 149, 0.795);
 	border-bottom: 1px solid #8000ff;
-	width: 350px;
+	width: 100%;
 	border: 0;
 	outline: 0;
 	padding: 2px 5px;

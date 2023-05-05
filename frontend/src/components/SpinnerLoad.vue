@@ -11,6 +11,10 @@
 	border-radius: 50%;
 	border-color: $highlight $highlight $highlight transparent;
 	animation: rotate 0.5s linear infinite;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 @keyframes rotate {

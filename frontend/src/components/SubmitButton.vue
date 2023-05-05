@@ -12,7 +12,7 @@ const emit = defineEmits(["clicked"]);
 <style scoped lang="scss">
 @import "@/scss/colors.scss";
 button {
-	width: 350px;
+	width: 100%;
 	color: #fff;
 	background-color: $main;
 	border: 1px solid transparent;
