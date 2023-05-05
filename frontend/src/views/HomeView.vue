@@ -3,10 +3,13 @@ import Input from "@/components/Input.vue";
 import SubmitButton from "@/components/SubmitButton.vue";
 import ShowPassword from "@/components/ShowPassword.vue";
 import ChangeForms from "@/components/ChangeForms.vue";
-import Message from "@/components/Message.vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 import UserUtils from "@/utils/User.utils";
+import { loggedUserStore } from "@/stores/User.store";
+import { useRouter } from "vue-router";
+
+const emit = defineEmits(["messageEmitter"]);
 
 const passwordL = ref("password");
 const passwordR = ref("password");
@@ -27,25 +30,29 @@ function changeForms() {
 	passwordR.value = "password";
 }
 
-let result = ref();
+const userStore = loggedUserStore();
+const router = useRouter();
 async function validateForms(formType: "login" | "register") {
+	let result: any;
 	if (formType == "login") {
-		console.log(loginForm);
+		result = await UserUtils.validateUserLogin(loginForm);
+		if (result.code != "error") router.push({ path: "/user" });
 	} else {
-		result.value = await UserUtils.validateUserRegister(registerForm);
+		result = await UserUtils.validateUserRegister(registerForm);
+		if (result.code != "error") showLoginForm.value = true;
 	}
+	emit("messageEmitter", result);
 }
 
 const showLoginForm = ref(true);
 
 const loginForm = { login: "", password: "" };
 const registerForm = { email: "", password: "", passwordRepeat: "", username: "" };
+
+onMounted(async () => await UserUtils.updateSessionStatus());
 </script>
 
 <template>
-	<Transition name="fade">
-		<Message @hide-message="result = undefined" v-if="result != undefined" :result="result" />
-	</Transition>
 	<div class="app">
 		<div class="message">
 			<p>Bem vindo a 🐝 Task 2 Do</p>
@@ -53,73 +60,80 @@ const registerForm = { email: "", password: "", passwordRepeat: "", username: ""
 			<p>Desenvolvida para a Inovatec 2023</p>
 		</div>
 		<div class="divider"></div>
-		<div class="forms">
-			<Transition name="move" mode="out-in">
-				<form @submit.prevent="validateForms('login')" v-if="showLoginForm">
-					<Input
-						@emit-values="loginForm.login = $event"
-						:type="'text'"
-						:id="'loginData'"
-						:name="'login'"
-						:label-text="'Digite seu email ou nome de usuário:'"
-						:placeholder="'example@gmail.com'"
-					/>
-					<Input
-						@emit-values="loginForm.password = $event"
-						:type="passwordL"
-						:id="'passwordLogin'"
-						:name="'password'"
-						:label-text="'Digite sua senha:'"
-						:placeholder="'a-z, A-Z, 0-9, símbolos e >= 8'"
-					/>
-					<ShowPassword @change-input-type="showPass($event)" :form-type="'login'" />
-					<SubmitButton :text="'Fazer login'" />
-					<ChangeForms :type="'register'" @change-forms="changeForms()" />
-				</form>
-				<form @submit.prevent="validateForms('register')" v-else>
-					<Input
-						@emit-values="registerForm.email = $event"
-						:type="'email'"
-						:id="'emailRegister'"
-						:name="'email'"
-						:label-text="'Digite seu email:'"
-						:placeholder="'example@gmail.com'"
-					/>
-					<Input
-						@emit-values="registerForm.username = $event"
-						:type="'text'"
-						:id="'usernameRegister'"
-						:name="'username'"
-						:label-text="'Digite seu nome de usuário:'"
-						:placeholder="'example'"
-					/>
-					<Input
-						@emit-values="registerForm.password = $event"
-						:type="passwordR"
-						:id="'passwordRegister'"
-						:name="'password'"
-						:label-text="'Digite sua senha:'"
-						:placeholder="'a-z, A-Z, 0-9, símbolos e >= 8'"
-					/>
-					<Input
-						@emit-values="registerForm.passwordRepeat = $event"
-						:type="passwordR"
-						:id="'passwordRegisterRepeat'"
-						:name="'passwordRepeat'"
-						:label-text="'Repita sua senha:'"
-						:placeholder="'a-z, A-Z, 0-9, símbolos e >= 8'"
-					/>
-					<ShowPassword @change-input-type="showPass($event)" :form-type="'register'" />
-					<SubmitButton :text="'Realizar registro'" />
-					<ChangeForms :type="'login'" @change-forms="changeForms()" />
-				</form>
-			</Transition>
+		<div v-if="!userStore.getUserStore.email">
+			<div class="forms">
+				<Transition name="move" mode="out-in">
+					<form @submit.prevent="validateForms('login')" v-if="showLoginForm">
+						<Input
+							@emit-values="loginForm.login = $event"
+							:type="'text'"
+							:id="'loginData'"
+							:name="'login'"
+							:label-text="'Digite seu email ou nome de usuário:'"
+							:placeholder="'example@gmail.com'"
+						/>
+						<Input
+							@emit-values="loginForm.password = $event"
+							:type="passwordL"
+							:id="'passwordLogin'"
+							:name="'password'"
+							:label-text="'Digite sua senha:'"
+							:placeholder="'a-z, A-Z, 0-9, símbolos e >= 8'"
+						/>
+						<ShowPassword @change-input-type="showPass($event)" :form-type="'login'" />
+						<SubmitButton :text="'Fazer login'" />
+						<ChangeForms :type="'register'" @change-forms="changeForms()" />
+					</form>
+					<form @submit.prevent="validateForms('register')" v-else>
+						<Input
+							@emit-values="registerForm.email = $event"
+							:type="'email'"
+							:id="'emailRegister'"
+							:name="'email'"
+							:label-text="'Digite seu email:'"
+							:placeholder="'example@gmail.com'"
+						/>
+						<Input
+							@emit-values="registerForm.username = $event"
+							:type="'text'"
+							:id="'usernameRegister'"
+							:name="'username'"
+							:label-text="'Digite seu nome de usuário:'"
+							:placeholder="'example'"
+						/>
+						<Input
+							@emit-values="registerForm.password = $event"
+							:type="passwordR"
+							:id="'passwordRegister'"
+							:name="'password'"
+							:label-text="'Digite sua senha:'"
+							:placeholder="'a-z, A-Z, 0-9, símbolos e >= 8'"
+						/>
+						<Input
+							@emit-values="registerForm.passwordRepeat = $event"
+							:type="passwordR"
+							:id="'passwordRegisterRepeat'"
+							:name="'passwordRepeat'"
+							:label-text="'Repita sua senha:'"
+							:placeholder="'a-z, A-Z, 0-9, símbolos e >= 8'"
+						/>
+						<ShowPassword @change-input-type="showPass($event)" :form-type="'register'" />
+						<SubmitButton :text="'Realizar registro'" />
+						<ChangeForms :type="'login'" @change-forms="changeForms()" />
+					</form>
+				</Transition>
+			</div>
+		</div>
+		<div v-else>
+			<p>Você já fez login anteriormente</p>
+			<p>Acesse a aplicação ou <RouterLink class="router-link" to="/user">reveja suas informações</RouterLink></p>
 		</div>
 	</div>
 </template>
 
 <style scoped lang="scss">
 @import "@/scss/colors.scss";
+
 .app {
 	color: #fff;
 	width: 1000px;
@@ -135,7 +149,6 @@ const registerForm = { email: "", password: "", passwordRepeat: "", username: ""
 	gap: 50px;
 	place-items: center;
 }
-
 .divider {
 	width: 1px;
 	height: 400px;
@@ -151,16 +164,13 @@ const registerForm = { email: "", password: "", passwordRepeat: "", username: ""
 	}
 }
 
-.move-enter-active,
-.fade-enter-active,
-.move-leave-active,
-.fade-leave-active {
-	transition: all 0.2s ease-out;
+.router-link {
+	color: $highlight;
 }
 
-.fade-enter-from,
-.fade-leave-to {
-	opacity: 0;
+.move-enter-active,
+.move-leave-active {
+	transition: all 0.2s ease-out;
 }
 
 .move-enter-from {

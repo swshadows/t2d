@@ -37,6 +37,7 @@
   ```bash
   SESSION_SECRET="" # Pode ser uma string qualquer, ex: secret
   DATABASE_URL="mysql://USERNAME:PASSWORD@localhost:3306/t2d?schema=public" # Substitua USERNAME e PASSWORD pelo user e senha do seu banco
+  FRONTEND_URL="http://localhost:5173" # O endereço que o frontend irá rodar
   ```
 
 - Rode os seguintes comandos

@@ -5,6 +5,10 @@ export const Messages = {
 				message: "O email não foi preenchido",
 				code: "error"
 			},
+			missingLogindata: {
+				message: "O campo de login não foi preenchido",
+				code: "error"
+			},
 			missingUsername: {
 				message: "O nome de usuário não foi preenchido",
 				code: "error"

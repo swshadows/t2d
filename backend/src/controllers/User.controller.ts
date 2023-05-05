@@ -12,7 +12,13 @@ const { error: userErr, success: userSuc } = Messages.userMessages;
 const { error: sysErr } = Messages.systemMessages;
 
 export default class UserController {
-	static async registerUser(req: Request, res: Response): Promise<void> {
+	static async validateSession(req: Request, res: Response) {
+		if (!req.session.user) {
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
+		}
+		res.status(200).send(req.session.user);
+	}
+	static async registerUser(req: Request, res: Response) {
 		// Checa se o usuário já está logado
 		if (req.session.user) {
 			return ResponseUtils.sendMessage(userErr.alreadyLogged, req, res);
@@ -63,7 +69,7 @@ export default class UserController {
 		ResponseUtils.sendMessage(userSuc.userCreated, req, res);
 	}
 
-	static async loginUser(req: Request, res: Response): Promise<void> {
+	static async loginUser(req: Request, res: Response) {
 		// Checa se o usuário já está logado
 		if (req.session.user) {
 			return ResponseUtils.sendMessage(userErr.alreadyLogged, req, res);

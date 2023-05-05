@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000;
 // Server middlewares
 server.use(urlencoded({ extended: false }));
 server.use(express.json());
-server.use(cors());
+server.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 
 // Session
 import session from "express-session";
@@ -20,6 +20,7 @@ server.use(
 		secret: String(process.env.SESSION_SECRET),
 		resave: false,
 		saveUninitialized: true,
+		cookie: { maxAge: 1000 * 60 * 60 * 24 },
 	})
 );
 

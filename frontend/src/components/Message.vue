@@ -7,7 +7,7 @@ const emit = defineEmits(["hideMessage"]);
 onMounted(() => {
 	setTimeout(() => {
 		emit("hideMessage");
-	}, 2000);
+	}, 1500);
 });
 </script>
 
