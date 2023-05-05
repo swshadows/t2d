@@ -1,11 +1,12 @@
 import UserAPI from "@/api/User.API";
-import { Messages } from "./Response.utils";
+import { MessageSender, Messages } from "./Response.utils";
 import type { PasswordUpdate, UserLoginReq, UserRegisterReq } from "@/types/User.types";
 import { loggedUserStore } from "@/stores/User.store";
 
 const { error } = Messages.userMessages;
 
 const userStore = loggedUserStore();
+
 export default class UserUtils {
 	static async updateSessionStatus() {
 		const res = await UserAPI.getSessionStatus();
@@ -21,14 +22,8 @@ export default class UserUtils {
 		if (!password) return error.missingPassword; // Checa se a senha existe
 
 		const res = await UserAPI.loginUser(user);
-
-		// Em caso de erros, retorna o erro
-		if (res.status && res.status != 200) {
-			return { message: res.data.error, code: "error" };
-		}
-
-		// Retorna o sucesso
-		return { message: res.success, code: "success" };
+		// Formata a mensagem de erro ou sucesso
+		return MessageSender.returnMessage(res);
 	}
 
 	static async validateUserRegister(user: UserRegisterReq) {
@@ -70,13 +65,8 @@ export default class UserUtils {
 		// Faz a requisição ao backend
 		const res = await UserAPI.updateEmail(email);
 
-		// Em caso de erros, retorna o erro
-		if (res.status && res.status != 200) {
-			return { message: res.data.error, code: "error" };
-		}
-
-		// Retorna o sucesso
-		return { message: res.success, code: "success" };
+		// Formata a mensagem de erro ou sucesso
+		return MessageSender.returnMessage(res);
 	}
 
 	static async updateUsername(username: string) {
@@ -86,13 +76,8 @@ export default class UserUtils {
 		// Faz a requisição ao backend
 		const res = await UserAPI.updateUsername(username);
 
-		// Em caso de erros, retorna o erro
-		if (res.status && res.status != 200) {
-			return { message: res.data.error, code: "error" };
-		}
-
-		// Retorna o sucesso
-		return { message: res.success, code: "success" };
+		// Formata a mensagem de erro ou sucesso
+		return MessageSender.returnMessage(res);
 	}
 
 	static async updatePassword(passwords: PasswordUpdate) {
@@ -108,25 +93,15 @@ export default class UserUtils {
 		// Faz a requisição ao backend
 		const res = await UserAPI.updatePassword(passwords);
 
-		// Em caso de erros, retorna o erro
-		if (res.status && res.status != 200) {
-			return { message: res.data.error, code: "error" };
-		}
-
-		// Retorna o sucesso
-		return { message: res.success, code: "success" };
+		// Formata a mensagem de erro ou sucesso
+		return MessageSender.returnMessage(res);
 	}
 
 	static async deleteUser() {
 		// Faz a requisição ao backend
 		const res = await UserAPI.deleteUser();
 
-		// Em caso de erros, retorna o erro
-		if (res.status && res.status != 200) {
-			return { message: res.data.error, code: "error" };
-		}
-
-		// Retorna o sucesso
-		return { message: res.success, code: "success" };
+		// Formata a mensagem de erro ou sucesso
+		return MessageSender.returnMessage(res);
 	}
 }

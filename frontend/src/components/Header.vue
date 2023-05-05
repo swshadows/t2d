@@ -3,6 +3,7 @@ import UserAPI from "@/api/User.API";
 import IconButton from "./IconButton.vue";
 import { loggedUserStore } from "@/stores/User.store";
 import { useRouter } from "vue-router";
+import { MessageSender } from "@/utils/Response.utils";
 
 const userStore = loggedUserStore();
 const router = useRouter();
@@ -10,11 +11,8 @@ const router = useRouter();
 const emit = defineEmits(["messageEmitter"]);
 async function doLogout() {
 	const res = await UserAPI.logoutUser();
-	if (res.status && res.status != 200) {
-		emit("messageEmitter", { message: res.data.error, code: "error" });
-		return;
-	}
-	emit("messageEmitter", { message: res.success, code: "success" });
+	const msg = MessageSender.returnMessage(res);
+	emit("messageEmitter", msg);
 	userStore.removeLogin();
 	router.push({ path: "/" });
 }

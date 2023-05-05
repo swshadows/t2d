@@ -8,14 +8,14 @@ const prop = defineProps({
 });
 const emit = defineEmits(["emitValues"]);
 function emitValue() {
-	emit("emitValues", iVal);
+	emit("emitValues", inputValue);
 }
-let iVal = "";
+let inputValue = "";
 </script>
 
 <template>
 	<label :for="prop.id">{{ prop.labelText }}</label>
-	<input :type="prop.type" :name="prop.name" :id="prop.id" :placeholder="prop.placeholder" v-model="iVal" @input="emitValue()" />
+	<input :type="prop.type" :name="prop.name" :id="prop.id" :placeholder="prop.placeholder" v-model="inputValue" @input="emitValue()" />
 </template>
 
 <style scoped lang="scss">

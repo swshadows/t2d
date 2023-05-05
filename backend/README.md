@@ -11,6 +11,7 @@
 
 | Rota                   |   Tipo   | Payload JSON                                      | Função                                                                                                                            |
 | :--------------------- | :------: | :------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------- |
+| `/user/`               |  `GET`   | -                                                 | Pega informações do usuário logado                                                                                                |
 | `/user/register`       |  `POST`  | `email`, `username`, `password`, `passwordRepeat` | Registra o usuário com `email`, `username`, e comparando `password` com `passwordRepeat`                                          |
 | `/user/login`          |  `POST`  | `login`, `password`                               | Realiza login com `login` (pode ser email ou username) e comparando `password`                                                    |
 | `/user/logout`         |  `POST`  | -                                                 | Realiza logout                                                                                                                    |

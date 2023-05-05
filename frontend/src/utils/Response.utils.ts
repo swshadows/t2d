@@ -41,3 +41,14 @@ export type MessageType = {
 	message: string;
 	code: "error" | "success";
 };
+
+export class MessageSender {
+	static returnMessage(res: any) {
+		if (res.status && res.status != 200) {
+			// Em caso de erros, retorna o erro
+			return { message: res.data.error, code: "error" };
+		}
+		// Retorna o sucesso
+		return { message: res.success, code: "success" };
+	}
+}
