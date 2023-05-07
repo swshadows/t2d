@@ -26,6 +26,11 @@ export default class DocumentController {
 			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
+		// Verifica se um dos campos enviados é maior que 20 caracteres
+		if (DocumentUtils.isTheFieldTooBig(name, desc)) {
+			return ResponseUtils.sendMessage(docErr.fieldTooBig, req, res);
+		}
+
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
 		const project = await ProjectUtils.isUserOwner(req.session.user, projectId, prisma);
 		if (!project) {
@@ -203,6 +208,11 @@ export default class DocumentController {
 			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
+		// Verifica se um dos campos enviados é maior que 20 caracteres
+		if (DocumentUtils.isTheFieldTooBig(name)) {
+			return ResponseUtils.sendMessage(docErr.fieldTooBig, req, res);
+		}
+
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
 		const project = await ProjectUtils.isUserOwner(req.session.user, projectId, prisma);
 		if (!project) {
@@ -234,6 +244,11 @@ export default class DocumentController {
 		const { desc, projectId, documentId } = req.body;
 		if (SystemUtils.isEmpty(desc, projectId, documentId)) {
 			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
+		}
+
+		// Verifica se um dos campos enviados é maior que 20 caracteres
+		if (DocumentUtils.isTheFieldTooBig(desc)) {
+			return ResponseUtils.sendMessage(docErr.fieldTooBig, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios

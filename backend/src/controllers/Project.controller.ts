@@ -40,6 +40,11 @@ export default class ProjectController {
 			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
+		// Checa se um dos argumentos é maior que 20 caracteres
+		if (ProjectUtils.isTheFieldTooBig(name, desc)) {
+			return ResponseUtils.sendMessage(projErr.fieldTooBig, req, res);
+		}
+
 		// Cria um projeto para o usuário
 		await prisma.user.update({
 			where: { id: req.session.user.id },
@@ -66,6 +71,11 @@ export default class ProjectController {
 		const { name, id } = req.body;
 		if (SystemUtils.isEmpty(name, id)) {
 			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
+		}
+
+		// Checa se um dos argumentos é maior que 20 caracteres
+		if (ProjectUtils.isTheFieldTooBig(name)) {
+			return ResponseUtils.sendMessage(projErr.fieldTooBig, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
@@ -100,6 +110,11 @@ export default class ProjectController {
 		const { desc, id } = req.body;
 		if (SystemUtils.isEmpty(desc, id)) {
 			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
+		}
+
+		// Checa se um dos argumentos é maior que 20 caracteres
+		if (ProjectUtils.isTheFieldTooBig(desc)) {
+			return ResponseUtils.sendMessage(projErr.fieldTooBig, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios

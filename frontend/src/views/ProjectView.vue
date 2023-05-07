@@ -21,20 +21,21 @@ onMounted(async () => {
 // Pega projetos caso existam e mostra. Caso não, mostra mensagens ou redireciona
 const projects = ref();
 async function fetchProjects() {
+	userStore.storeLogin(await UserAPI.getSessionStatus());
 	const res = await ProjectAPI.getProjects();
 	if (res.code == "error") {
 		if (res.apiCode == "notLoggedYet") {
 			router.push({ path: "/" });
 		}
+		projects.value = 0;
 		emit("messageEmitter", res);
 	} else {
 		projects.value = res;
-		userStore.storeLogin(await UserAPI.getSessionStatus());
 	}
 }
 
 // Passa a mensagem do componente Modal para o listener de mensagens externo na App
-async function modalListener(e: any) {
+async function messageEmitListener(e: any) {
 	emit("messageEmitter", e);
 	await fetchProjects();
 }
@@ -46,14 +47,14 @@ const modalOn = ref(false);
 <template>
 	<SpinnerLoad v-if="!userStore.getUserStore.email" />
 	<div v-else class="app">
-		<ProjectBox v-for="p in projects" :project="{ name: p.name, desc: p.desc, id: p.id }" />
+		<ProjectBox @message-emitter="messageEmitListener($event)" v-for="p in projects" :project="{ name: p.name, desc: p.desc, id: p.id }" />
 		<div @click="modalOn = !modalOn" class="create">
 			<img src="@/assets/folder-group.svg" />
 			<p>Clique aqui para criar um novo projeto</p>
 		</div>
 	</div>
 	<Transition name="fade">
-		<CreateModal @message-emitter="modalListener($event)" v-if="modalOn" @modal-toggle="modalOn = !modalOn" :text="'projeto'" :type="'create'" />
+		<CreateModal @message-emitter="messageEmitListener($event)" v-if="modalOn" @modal-toggle="modalOn = !modalOn" :text="'projeto'" :type="'create'" />
 	</Transition>
 </template>
 
@@ -96,15 +97,5 @@ const modalOn = ref(false);
 		cursor: pointer;
 		border-color: $highlight;
 	}
-}
-
-.fade-enter-active,
-.fade-leave-active {
-	transition: all 0.2s ease-out;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-	opacity: 0;
 }
 </style>

@@ -20,7 +20,8 @@ function showMessage(e: any) {
 	<Footer />
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
+// Transição de fadeout
 .fade-enter-active,
 .fade-leave-active {
 	transition: all 0.2s ease-out;
@@ -28,6 +29,22 @@ function showMessage(e: any) {
 
 .fade-enter-from,
 .fade-leave-to {
+	opacity: 0;
+}
+
+// Transição de movimento
+.move-enter-active,
+.move-leave-active {
+	transition: all 0.2s ease-out;
+}
+
+.move-enter-from {
+	transform: translateY(10%);
+	opacity: 0;
+}
+
+.move-leave-to {
+	transform: translateY(-10%);
 	opacity: 0;
 }
 </style>

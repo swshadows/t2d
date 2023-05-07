@@ -162,24 +162,4 @@ form,
 	gap: 4px;
 	width: 90%;
 }
-// .deleteConfirm {
-// 	&.hidden {
-// 		opacity: 0;
-// 	}
-// }
-
-.move-enter-active,
-.move-leave-active {
-	transition: all 0.2s ease-out;
-}
-
-.move-enter-from {
-	transform: translateY(10%);
-	opacity: 0;
-}
-
-.move-leave-to {
-	transform: translateY(-10%);
-	opacity: 0;
-}
 </style>

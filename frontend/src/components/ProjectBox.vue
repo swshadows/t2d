@@ -2,22 +2,44 @@
 import { ref } from "vue";
 import Input from "./Input.vue";
 import SubmitButton from "./SubmitButton.vue";
+import ProjectAPI from "@/api/Project.API";
+import DeletePopover from "./DeletePopover.vue";
 
-defineProps({
-	project: Object
-});
+const props = defineProps<{ project: { name: string; desc: string; id: number } }>();
 
-const editOn = ref(false);
+const emit = defineEmits(["messageEmitter"]);
 
+// Edita o nome ou descrição do projeto
 let name = "";
 let desc = "";
-function editProject(data: "name" | "desc") {
+async function editProject(data: "name" | "desc") {
+	let response: any;
 	if (data == "name") {
-		console.log(name);
+		response = await ProjectAPI.updateName(name, props.project.id);
 	} else {
-		console.log(desc);
+		response = await ProjectAPI.updateDescription(desc, props.project.id);
 	}
+	if (response.code != "error") switchEdit();
+	emit("messageEmitter", response);
 }
+
+// Deleta o projeto
+async function deleteProject() {
+	let response = await ProjectAPI.deleteProject(props.project.id);
+	if (response.code != "error") deleteOn.value = !deleteOn.value;
+	emit("messageEmitter", response);
+}
+
+// Modifica o estado de edição
+const editOn = ref(false);
+function switchEdit() {
+	editOn.value = !editOn.value;
+	name = "";
+	desc = "";
+}
+
+// Modifica o estado de deleção
+const deleteOn = ref(false);
 </script>
 
 <template>
@@ -34,8 +56,11 @@ function editProject(data: "name" | "desc") {
 			<p>{{ project?.desc }}</p>
 		</div>
 		<div class="buttons">
-			<button @click="editOn = !editOn"><img src="@/assets/edit.svg" alt="" /></button>
-			<button><img src="@/assets/trash.svg" alt="" /></button>
+			<button @click="switchEdit()"><img src="@/assets/edit.svg" alt="" /></button>
+			<button @click="deleteOn = !deleteOn"><img src="@/assets/trash.svg" alt="" /></button>
+			<Transition name="fade">
+				<DeletePopover v-if="deleteOn" @cancel-delete="deleteOn = !deleteOn" @delete="deleteProject()" />
+			</Transition>
 		</div>
 	</div>
 </template>

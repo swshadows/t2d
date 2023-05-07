@@ -16,4 +16,12 @@ export default class DocumentUtils {
 		if (projectOwner || sharedUser) return true;
 		else return false;
 	}
+
+	// Checa se o item enviado tem mais que 20 caracteres
+	static isTheFieldTooBig(...fields: string[]) {
+		const arr = fields.map((item) => {
+			return item.length > 20;
+		});
+		return arr.includes(true);
+	}
 }

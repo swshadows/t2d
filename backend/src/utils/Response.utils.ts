@@ -147,6 +147,13 @@ export const Messages = {
 					code: "notOwner",
 				},
 			},
+			fieldTooBig: {
+				status: 400,
+				json: {
+					error: "Um dos campos enviados ultrapassa o limite de 20 caracteres",
+					code: "fieldTooBig",
+				},
+			},
 		},
 		success: {
 			projectCreated: {
@@ -225,12 +232,18 @@ export const Messages = {
 					code: "notOwner",
 				},
 			},
-
 			contentFieldUndefined: {
 				status: 500,
 				json: {
 					error: "O campo conteúdo deve ser enviado, mesmo estando vazio",
 					code: "contentFieldUndefined",
+				},
+			},
+			fieldTooBig: {
+				status: 400,
+				json: {
+					error: "Um dos campos enviados ultrapassa o limite de 20 caracteres",
+					code: "fieldTooBig",
 				},
 			},
 		},

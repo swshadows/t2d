@@ -9,4 +9,12 @@ export default class ProjectUtils {
 			return false;
 		} else return findProject;
 	}
+
+	// Checa se o item enviado tem mais que 20 caracteres
+	static isTheFieldTooBig(...fields: string[]) {
+		const arr = fields.map((item) => {
+			return item.length > 20;
+		});
+		return arr.includes(true);
+	}
 }
