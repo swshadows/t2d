@@ -34,6 +34,22 @@ export const Messages = {
 				code: "error"
 			}
 		}
+	},
+	projectMessages: {
+		error: {
+			missingName: {
+				message: "O nome do projeto não foi preenchido",
+				code: "error"
+			},
+			missingDesc: {
+				message: "A descrição do projeto não foi preenchida",
+				code: "error"
+			},
+			fieldTooLarge: {
+				message: "O campo tem mais que 20 caracteres",
+				code: "error"
+			}
+		}
 	}
 };
 

@@ -24,7 +24,7 @@ onMounted(() => {
 	top: 10%;
 	left: 50%;
 	transform: translate(-50%);
-	z-index: 1;
+	z-index: 99;
 	display: grid;
 	place-items: center;
 }

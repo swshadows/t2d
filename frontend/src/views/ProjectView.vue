@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ProjectBox from "@/components/ProjectBox.vue";
-import CreateEditModal from "@/components/CreateEditModal.vue";
+import CreateModal from "@/components/CreateModal.vue";
 import SpinnerLoad from "@/components/SpinnerLoad.vue";
 
 import { onMounted, ref } from "vue";
@@ -8,6 +8,7 @@ import { useRouter } from "vue-router";
 
 import UserUtils from "@/utils/User.utils";
 import { loggedUserStore } from "@/stores/User.store";
+import ProjectUtils from "@/utils/Project.utils";
 
 const emit = defineEmits(["messageEmitter"]);
 
@@ -16,6 +17,7 @@ const modalOn = ref(false);
 const userStore = loggedUserStore();
 
 const router = useRouter();
+let projects = ref();
 let sessionStatus: any;
 onMounted(async () => {
 	sessionStatus = await UserUtils.updateSessionStatus();
@@ -23,20 +25,32 @@ onMounted(async () => {
 		emit("messageEmitter", { message: sessionStatus.data.error, code: "error" });
 		router.push({ path: "/" });
 	}
+	await fetchProjects();
 });
+
+async function fetchProjects() {
+	const res = await ProjectUtils.getProjects();
+	if (res.code == "error") emit("messageEmitter", res);
+	else projects.value = res;
+}
+
+async function modalListener(e: any) {
+	emit("messageEmitter", e);
+	await fetchProjects();
+}
 </script>
 
 <template>
 	<SpinnerLoad v-if="!userStore.getUserStore.email" />
 	<div v-else class="app">
-		<ProjectBox :project="{ name: 'Projeto top', desc: 'Um projeto muito top e legal pra carambolas', id: 1 }" />
+		<ProjectBox v-for="p in projects" :project="{ name: p.name, desc: p.desc, id: p.id }" />
 		<div @click="modalOn = !modalOn" class="create">
 			<img src="@/assets/folder-group.svg" />
 			<p>Clique aqui para criar um novo projeto</p>
 		</div>
 	</div>
 	<Transition name="fade">
-		<CreateEditModal v-if="modalOn" @modal-toggle="modalOn = !modalOn" :text="'projeto'" :type="'create'" />
+		<CreateModal @message-emitter="modalListener($event)" v-if="modalOn" @modal-toggle="modalOn = !modalOn" :text="'projeto'" :type="'create'" />
 	</Transition>
 </template>
 

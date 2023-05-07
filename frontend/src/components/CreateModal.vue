@@ -1,0 +1,71 @@
+<script setup lang="ts">
+import ProjectUtils from "@/utils/Project.utils";
+import Input from "./Input.vue";
+import SubmitButton from "./SubmitButton.vue";
+
+const prop = defineProps<{ text: "documento" | "projeto"; id?: Number }>();
+
+const emit = defineEmits(["modalToggle", "messageEmitter"]);
+
+async function submitForm(type: typeof prop.text) {
+	let result: any;
+	if (type == "projeto") {
+		result = await ProjectUtils.createProject({ name, desc });
+	}
+	if (result.code != "error") emit("modalToggle");
+	emit("messageEmitter", result);
+}
+let name = "";
+let desc = "";
+</script>
+
+<template>
+	<div @click.self="emit('modalToggle')" class="backdrop">
+		<div class="modal">
+			<form @submit.prevent="submitForm(prop.text)">
+				<Input
+					@emit-values="name = $event"
+					:name="'title'"
+					:label-text="`Dê um nome para o ${prop.text}`"
+					:id="'title'"
+					:type="'text'"
+					:placeholder="'Máximo de 20 caracteres'"
+				/>
+				<Input
+					@emit-values="desc = $event"
+					:name="'desc'"
+					:label-text="`Dê uma descrição para o ${prop.text}`"
+					:id="'desc'"
+					:type="'text'"
+					:placeholder="'Máximo de 20 caracteres'"
+				/>
+				<SubmitButton :text="`Criar novo ${prop.text}`" />
+				<SubmitButton :class="'delete'" @clicked="emit('modalToggle')" :text="`Cancelar criação de ${prop.text}`" />
+				<input v-if="prop.id" type="hidden" name="id" :value="prop.id" />
+			</form>
+		</div>
+	</div>
+</template>
+
+<style scoped lang="scss">
+.backdrop {
+	background: rgba(0, 0, 0, 0.397);
+	position: fixed;
+	z-index: 9;
+	width: 100%;
+	height: 100vh;
+	display: grid;
+	place-items: center;
+}
+.modal {
+	width: 40%;
+	background: #fff;
+	border-radius: 5px;
+	padding: 20px;
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+}
+</style>
