@@ -8,14 +8,17 @@ import { onMounted, ref } from "vue";
 import UserAPI from "@/api/User.API";
 import { loggedUserStore } from "@/stores/User.store";
 import { useRouter } from "vue-router";
+import SpinnerLoad from "@/components/SpinnerLoad.vue";
 
 const emit = defineEmits(["messageEmitter"]);
 const userStore = loggedUserStore();
 const router = useRouter();
 
+const awaitingApi = ref(true);
 onMounted(async () => {
 	const res = await UserAPI.getSessionStatus();
 	if (res.code != "error") userStore.storeLogin(res);
+	awaitingApi.value = false;
 });
 
 // Alternador de visibilidade de senhas
@@ -61,7 +64,8 @@ async function validateForms(formType: "login" | "register") {
 </script>
 
 <template>
-	<div class="app">
+	<SpinnerLoad v-if="awaitingApi" />
+	<div v-else class="app">
 		<div class="message">
 			<p>Bem vindo a 🐝 Task 2 Do</p>
 			<p>Uma aplicação para o gerenciamento dos seus projetos</p>
