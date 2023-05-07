@@ -5,39 +5,42 @@ import ShowPassword from "@/components/ShowPassword.vue";
 import SpinnerLoad from "@/components/SpinnerLoad.vue";
 
 import { loggedUserStore } from "@/stores/User.store";
-import UserUtils from "@/utils/User.utils";
+import UserAPI from "@/api/User.API";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 
 const emit = defineEmits(["messageEmitter"]);
 
-let sessionStatus: any;
 const userStore = loggedUserStore();
 onMounted(async () => {
-	sessionStatus = await UserUtils.updateSessionStatus();
-	if (sessionStatus && sessionStatus.data) {
-		emit("messageEmitter", { message: sessionStatus.data.error, code: "error" });
+	const res = await UserAPI.updateSessionStatus();
+	if (res.code == "error") {
+		emit("messageEmitter", res);
 		router.push({ path: "/" });
+	} else {
+		userStore.storeLogin(res);
 	}
 });
 
 async function validateForms(formType: "email" | "username" | "password" | "delete") {
 	let result: any;
 	if (formType == "email") {
-		result = await UserUtils.updateEmail(email);
+		result = await UserAPI.updateEmail(email);
 	} else if (formType == "username") {
-		result = await UserUtils.updateUsername(username);
+		result = await UserAPI.updateUsername(username);
 	} else if (formType == "password") {
-		result = await UserUtils.updatePassword(passwords);
+		result = await UserAPI.updatePassword(passwords);
 	} else {
-		result = await UserUtils.deleteUser();
+		result = await UserAPI.deleteUser();
 		if (result.code != "error") {
 			userStore.removeLogin();
+			emit("messageEmitter", result);
 			return router.push({ path: "/" });
 		}
 	}
-	await UserUtils.updateSessionStatus();
+	const res = await UserAPI.updateSessionStatus();
+	if (res.code != "error") userStore.storeLogin(res);
 	emit("messageEmitter", result);
 }
 

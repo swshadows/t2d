@@ -1,92 +1,135 @@
+import { MessageSender, Messages } from "../utils/Response.utils";
 import type { PasswordUpdate, UserLoginReq, UserRegisterReq } from "@/types/User.types";
-import instance from "@/utils/axios";
+import instance from "../utils/axios";
 
+const { error } = Messages.userMessages;
 const endpoint = "/user";
 
 export default class UserAPI {
-	// Faz uma requisição de estado da sessão
-	static async getSessionStatus() {
+	static async updateSessionStatus() {
+		// Faz a requisição ao backend
 		try {
 			const status = await instance.get(`${endpoint}`);
 			return status.data;
 		} catch (error: any) {
-			return error.response;
+			return MessageSender.returnMessage(error.response);
 		}
 	}
 
-	// Faz o login com os dados do formulário
-	static async loginUser(user: UserLoginReq) {
+	// Valida o formulário de login
+	static async validateUserLogin(user: UserLoginReq) {
+		const { login, password } = user;
+		if (!login) return error.missingLogindata; // Checa se foi informado um email ou username
+		if (!password) return error.missingPassword; // Checa se a senha existe
+
+		// Faz a requisição ao backend
 		try {
 			const response = await instance.post(`${endpoint}/login`, user);
-			return response.data;
+			return MessageSender.returnMessage(response.data);
 		} catch (error: any) {
-			return error.response;
+			return MessageSender.returnMessage(error.response);
 		}
 	}
 
-	// Pega usuário do banco de dados
-	static async getUser(username: string) {
-		const response = await instance.get(`${endpoint}/${username}`);
-		return response;
-	}
+	// Valida o formulário de registro
+	static async validateUserRegister(user: UserRegisterReq) {
+		const email = user.email.trim();
+		const username = user.username.trim();
+		const { password, passwordRepeat } = user;
+		if (!email) return error.missingEmail; // Checa se email existe
+		if (!username) return error.missingUsername; // Checa se o username existe
+		if (!password) return error.missingPassword; // Checa se a senha existe
+		if (!passwordRepeat) return error.missingPasswordRepeat; // Checa se a repetição da senha existe
+		if (password != passwordRepeat) return error.diffPasswords; // Checa se as senhas são iguais
 
-	// Registra usuário com dados do formulário
-	static async registerUser(user: UserRegisterReq) {
+		// Valida o email com RegEx
+		const emailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)*$/i;
+		if (!emailRegex.test(email)) return error.invalidEmail;
+
+		// Valida a senha com RegEx
+		const passwordRegex = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,50})/gm;
+		if (!passwordRegex.test(password)) return error.invalidPassword;
+
+		// Faz a requisição ao backend
 		try {
 			const response = await instance.post(`${endpoint}/register`, user);
-			return response.data;
+			return MessageSender.returnMessage(response.data);
 		} catch (error: any) {
-			return error.response;
+			return MessageSender.returnMessage(error.response);
 		}
 	}
 
-	// Realiza atualização de email com dados do formulário para usuário logado
+	// Atualiza o email
 	static async updateEmail(email: string) {
+		email = email.trim();
+		if (!email) return error.missingEmail;
+
+		// Valida o email com RegEx
+		const emailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)*$/i;
+		if (!emailRegex.test(email)) return error.invalidEmail;
+
+		// Faz a requisição ao backend
 		try {
 			const response = await instance.put(`${endpoint}/updateEmail`, { email });
-			return response.data;
+			return MessageSender.returnMessage(response.data);
 		} catch (error: any) {
-			return error.response;
+			return MessageSender.returnMessage(error.response);
 		}
 	}
 
-	// Realiza atualização de nome de usuário com dados do formulário para usuário logado
+	// Atualiza o nome de usuário
 	static async updateUsername(username: string) {
+		username = username.trim();
+		if (!username) return error.missingUsername;
+
+		// Faz a requisição ao backend
 		try {
 			const response = await instance.put(`${endpoint}/updateUsername`, { username });
-			return response.data;
+			return MessageSender.returnMessage(response.data);
 		} catch (error: any) {
-			return error.response;
+			return MessageSender.returnMessage(error.response);
 		}
 	}
 
-	// Realiza atualização de senha com dados do formulário para usuário logado
+	// Atualiza senha
 	static async updatePassword(passwords: PasswordUpdate) {
+		const { password, newPassword, newPasswordRepeat } = passwords;
+		if (!password || !newPassword) return error.missingPassword;
+		if (!newPasswordRepeat) return error.missingPasswordRepeat;
+		if (newPassword != newPasswordRepeat) return error.diffPasswords;
+
+		// Valida a senha com RegEx
+		const passwordRegex = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,50})/gm;
+		if (!passwordRegex.test(newPassword)) return error.invalidPassword;
+
+		// Faz a requisição ao backend
 		try {
 			const response = await instance.put(`${endpoint}/updatePassword`, passwords);
-			return response.data;
+			return MessageSender.returnMessage(response.data);
 		} catch (error: any) {
-			return error.response;
+			return MessageSender.returnMessage(error.response);
 		}
 	}
 
-	// Realiza deleção do usuário
+	// Deleta usuário
 	static async deleteUser() {
+		// Faz a requisição ao backend
 		try {
 			const response = await instance.delete(`${endpoint}/delete`);
-			return response.data;
+			return MessageSender.returnMessage(response.data);
 		} catch (error: any) {
-			return error.response;
+			return MessageSender.returnMessage(error.response);
 		}
 	}
 
-	// Realiza logout do usuário logado, com desvinculo de sessão
+	// Realiza o logout
 	static async logoutUser() {
+		// Faz a requisição ao backend
 		try {
 			const response = await instance.post(`${endpoint}/logout`);
-			return response.data;
+			return MessageSender.returnMessage(response.data);
 		} catch (error: any) {
-			return error.response;
+			return MessageSender.returnMessage(error.response);
 		}
 	}
 }

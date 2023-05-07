@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ProjectUtils from "@/utils/Project.utils";
+import ProjectAPI from "@/api/Project.API";
 import Input from "./Input.vue";
 import SubmitButton from "./SubmitButton.vue";
 
@@ -10,7 +10,7 @@ const emit = defineEmits(["modalToggle", "messageEmitter"]);
 async function submitForm(type: typeof prop.text) {
 	let result: any;
 	if (type == "projeto") {
-		result = await ProjectUtils.createProject({ name, desc });
+		result = await ProjectAPI.createProject({ name, desc });
 	}
 	if (result.code != "error") emit("modalToggle");
 	emit("messageEmitter", result);

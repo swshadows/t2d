@@ -5,7 +5,7 @@ import ShowPassword from "@/components/ShowPassword.vue";
 import ChangeForms from "@/components/ChangeForms.vue";
 import { onMounted, ref } from "vue";
 
-import UserUtils from "@/utils/User.utils";
+import UserAPI from "@/api/User.API";
 import { loggedUserStore } from "@/stores/User.store";
 import { useRouter } from "vue-router";
 
@@ -35,10 +35,14 @@ const router = useRouter();
 async function validateForms(formType: "login" | "register") {
 	let result: any;
 	if (formType == "login") {
-		result = await UserUtils.validateUserLogin(loginForm);
-		if (result.code != "error") router.push({ path: "/app" });
+		result = await UserAPI.validateUserLogin(loginForm);
+		if (result.code != "error") {
+			const res = await UserAPI.updateSessionStatus();
+			userStore.storeLogin(res);
+			router.push({ path: "/app" });
+		}
 	} else {
-		result = await UserUtils.validateUserRegister(registerForm);
+		result = await UserAPI.validateUserRegister(registerForm);
 		if (result.code != "error") showLoginForm.value = true;
 	}
 	emit("messageEmitter", result);
@@ -49,7 +53,10 @@ const showLoginForm = ref(true);
 const loginForm = { login: "", password: "" };
 const registerForm = { email: "", password: "", passwordRepeat: "", username: "" };
 
-onMounted(async () => await UserUtils.updateSessionStatus());
+onMounted(async () => {
+	const res = await UserAPI.updateSessionStatus();
+	if (res.code != "error") userStore.storeLogin(res);
+});
 </script>
 
 <template>

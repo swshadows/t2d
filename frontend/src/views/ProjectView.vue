@@ -6,9 +6,9 @@ import SpinnerLoad from "@/components/SpinnerLoad.vue";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
-import UserUtils from "@/utils/User.utils";
+import UserAPI from "@/api/User.API";
 import { loggedUserStore } from "@/stores/User.store";
-import ProjectUtils from "@/utils/Project.utils";
+import ProjectAPI from "@/api/Project.API";
 
 const emit = defineEmits(["messageEmitter"]);
 
@@ -18,18 +18,19 @@ const userStore = loggedUserStore();
 
 const router = useRouter();
 let projects = ref();
-let sessionStatus: any;
 onMounted(async () => {
-	sessionStatus = await UserUtils.updateSessionStatus();
-	if (sessionStatus && sessionStatus.data) {
-		emit("messageEmitter", { message: sessionStatus.data.error, code: "error" });
+	const res = await UserAPI.updateSessionStatus();
+	if (res.code == "error") {
+		emit("messageEmitter", res);
 		router.push({ path: "/" });
+	} else {
+		userStore.storeLogin(res);
+		await fetchProjects();
 	}
-	await fetchProjects();
 });
 
 async function fetchProjects() {
-	const res = await ProjectUtils.getProjects();
+	const res = await ProjectAPI.getProjects();
 	if (res.code == "error") emit("messageEmitter", res);
 	else projects.value = res;
 }

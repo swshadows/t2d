@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import UserAPI from "@/api/User.API";
 import IconButton from "./IconButton.vue";
 import { loggedUserStore } from "@/stores/User.store";
 import { useRouter } from "vue-router";
-import { MessageSender } from "@/utils/Response.utils";
+import UserAPI from "@/api/User.API";
 
 const userStore = loggedUserStore();
 const router = useRouter();
@@ -11,8 +10,7 @@ const router = useRouter();
 const emit = defineEmits(["messageEmitter"]);
 async function doLogout() {
 	const res = await UserAPI.logoutUser();
-	const msg = MessageSender.returnMessage(res);
-	emit("messageEmitter", msg);
+	emit("messageEmitter", res);
 	userStore.removeLogin();
 	router.push({ path: "/" });
 }
