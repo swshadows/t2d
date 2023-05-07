@@ -1,8 +1,6 @@
 <script setup lang="ts">
 const emit = defineEmits(["changeForms"]);
-const props = defineProps({
-	type: String
-});
+const props = defineProps<{ type: "login" | "register" }>();
 </script>
 
 <template>

@@ -3,6 +3,8 @@ import { ref } from "vue";
 
 const emit = defineEmits(["changeInputType"]);
 const prop = defineProps(["formType"]);
+
+// Modifica o estado das senhas de acordo com a checkbox, emitindo estado checado e tipo de formulário, para views multiformulário
 function changeStatus(formType: string) {
 	checked.value = !checked.value;
 	const emitData = {

@@ -10,7 +10,15 @@ import { loggedUserStore } from "@/stores/User.store";
 import { useRouter } from "vue-router";
 
 const emit = defineEmits(["messageEmitter"]);
+const userStore = loggedUserStore();
+const router = useRouter();
 
+onMounted(async () => {
+	const res = await UserAPI.getSessionStatus();
+	if (res.code != "error") userStore.storeLogin(res);
+});
+
+// Alternador de visibilidade de senhas
 const passwordL = ref("password");
 const passwordR = ref("password");
 function showPass(show: { check: boolean; formType: string }) {
@@ -24,20 +32,23 @@ function showPass(show: { check: boolean; formType: string }) {
 	}
 }
 
+// Função para alternar entre formulários de registro e login
+const showLoginForm = ref(true);
 function changeForms() {
 	showLoginForm.value = !showLoginForm.value;
 	passwordL.value = "password";
 	passwordR.value = "password";
 }
 
-const userStore = loggedUserStore();
-const router = useRouter();
+// Função de formulário e API
+const loginForm = { login: "", password: "" };
+const registerForm = { email: "", password: "", passwordRepeat: "", username: "" };
 async function validateForms(formType: "login" | "register") {
 	let result: any;
 	if (formType == "login") {
 		result = await UserAPI.validateUserLogin(loginForm);
 		if (result.code != "error") {
-			const res = await UserAPI.updateSessionStatus();
+			const res = await UserAPI.getSessionStatus();
 			userStore.storeLogin(res);
 			router.push({ path: "/app" });
 		}
@@ -47,16 +58,6 @@ async function validateForms(formType: "login" | "register") {
 	}
 	emit("messageEmitter", result);
 }
-
-const showLoginForm = ref(true);
-
-const loginForm = { login: "", password: "" };
-const registerForm = { email: "", password: "", passwordRepeat: "", username: "" };
-
-onMounted(async () => {
-	const res = await UserAPI.updateSessionStatus();
-	if (res.code != "error") userStore.storeLogin(res);
-});
 </script>
 
 <template>

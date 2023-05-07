@@ -2,7 +2,7 @@
 import type { MessageType } from "@/utils/Response.utils";
 import { onMounted } from "vue";
 
-const prop = defineProps<{ result: MessageType }>();
+defineProps<{ result: MessageType }>();
 const emit = defineEmits(["hideMessage"]);
 onMounted(() => {
 	setTimeout(() => {

@@ -8,6 +8,8 @@ const userStore = loggedUserStore();
 const router = useRouter();
 
 const emit = defineEmits(["messageEmitter"]);
+
+// Realiza o logout pelo botão
 async function doLogout() {
 	const res = await UserAPI.logoutUser();
 	emit("messageEmitter", res);

@@ -6,39 +6,41 @@ import SpinnerLoad from "@/components/SpinnerLoad.vue";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
-import UserAPI from "@/api/User.API";
 import { loggedUserStore } from "@/stores/User.store";
 import ProjectAPI from "@/api/Project.API";
+import UserAPI from "@/api/User.API";
 
 const emit = defineEmits(["messageEmitter"]);
-
-const modalOn = ref(false);
-
 const userStore = loggedUserStore();
-
 const router = useRouter();
-let projects = ref();
+
 onMounted(async () => {
-	const res = await UserAPI.updateSessionStatus();
-	if (res.code == "error") {
-		emit("messageEmitter", res);
-		router.push({ path: "/" });
-	} else {
-		userStore.storeLogin(res);
-		await fetchProjects();
-	}
+	await fetchProjects();
 });
 
+// Pega projetos caso existam e mostra. Caso não, mostra mensagens ou redireciona
+const projects = ref();
 async function fetchProjects() {
 	const res = await ProjectAPI.getProjects();
-	if (res.code == "error") emit("messageEmitter", res);
-	else projects.value = res;
+	if (res.code == "error") {
+		if (res.apiCode == "notLoggedYet") {
+			router.push({ path: "/" });
+		}
+		emit("messageEmitter", res);
+	} else {
+		projects.value = res;
+		userStore.storeLogin(await UserAPI.getSessionStatus());
+	}
 }
 
+// Passa a mensagem do componente Modal para o listener de mensagens externo na App
 async function modalListener(e: any) {
 	emit("messageEmitter", e);
 	await fetchProjects();
 }
+
+// Alterna visibilidade do modal de criação de projetos
+const modalOn = ref(false);
 </script>
 
 <template>

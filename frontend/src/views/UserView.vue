@@ -13,16 +13,26 @@ const router = useRouter();
 const emit = defineEmits(["messageEmitter"]);
 
 const userStore = loggedUserStore();
+
 onMounted(async () => {
-	const res = await UserAPI.updateSessionStatus();
+	await getUserData();
+});
+
+// Pega os dados da sessão atual
+async function getUserData() {
+	const res = await UserAPI.getSessionStatus();
 	if (res.code == "error") {
 		emit("messageEmitter", res);
 		router.push({ path: "/" });
 	} else {
 		userStore.storeLogin(res);
 	}
-});
+}
 
+// Valida os formulários de manipulação de usuário
+let email = "";
+let username = "";
+const passwords = { password: "", newPassword: "", newPasswordRepeat: "" };
 async function validateForms(formType: "email" | "username" | "password" | "delete") {
 	let result: any;
 	if (formType == "email") {
@@ -39,19 +49,11 @@ async function validateForms(formType: "email" | "username" | "password" | "dele
 			return router.push({ path: "/" });
 		}
 	}
-	const res = await UserAPI.updateSessionStatus();
-	if (res.code != "error") userStore.storeLogin(res);
+	await getUserData();
 	emit("messageEmitter", result);
 }
 
-let email = "";
-let username = "";
-const passwords = {
-	password: "",
-	newPassword: "",
-	newPasswordRepeat: ""
-};
-
+// Controla a visibilidade de senhas na edição
 const passwordInput = ref("password");
 function togglePasswords(e: any) {
 	const { check } = e;
@@ -59,10 +61,8 @@ function togglePasswords(e: any) {
 	else passwordInput.value = "password";
 }
 
+// Controla a visibilidade da confirmação de deleção de conta
 const deleteVis = ref(false);
-function toggleDelete() {
-	deleteVis.value = !deleteVis.value;
-}
 </script>
 
 <template>
@@ -119,7 +119,7 @@ function toggleDelete() {
 				<SubmitButton :text="'Atualizar senha'" />
 			</form>
 			<div class="wrapper">
-				<SubmitButton @clicked="toggleDelete()" :text="'Apagar conta'" />
+				<SubmitButton @clicked="deleteVis = !deleteVis" :text="'Apagar conta'" />
 				<Transition name="move">
 					<form @submit.prevent="validateForms('delete')" class="deleteConfirm" v-if="deleteVis">
 						<p class="deleteConfirm">Tem certeza que deseja apagar a conta? Essa ação é irreversível</p>

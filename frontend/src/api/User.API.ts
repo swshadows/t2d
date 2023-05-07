@@ -6,7 +6,8 @@ const { error } = Messages.userMessages;
 const endpoint = "/user";
 
 export default class UserAPI {
-	static async updateSessionStatus() {
+	// Pega informação da sessão atual
+	static async getSessionStatus() {
 		// Faz a requisição ao backend
 		try {
 			const status = await instance.get(`${endpoint}`);

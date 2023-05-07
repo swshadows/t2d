@@ -3,7 +3,7 @@ import { ref } from "vue";
 import Input from "./Input.vue";
 import SubmitButton from "./SubmitButton.vue";
 
-const prop = defineProps({
+defineProps({
 	project: Object
 });
 
@@ -30,8 +30,8 @@ function editProject(data: "name" | "desc") {
 			<SubmitButton @clicked="editProject('desc')" :text="'Editar descrição'" />
 		</form>
 		<div v-else>
-			<h2>{{ prop.project?.name }}</h2>
-			<p>{{ prop.project?.desc }}</p>
+			<h2>{{ project?.name }}</h2>
+			<p>{{ project?.desc }}</p>
 		</div>
 		<div class="buttons">
 			<button @click="editOn = !editOn"><img src="@/assets/edit.svg" alt="" /></button>

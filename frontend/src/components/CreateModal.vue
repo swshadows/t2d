@@ -3,10 +3,13 @@ import ProjectAPI from "@/api/Project.API";
 import Input from "./Input.vue";
 import SubmitButton from "./SubmitButton.vue";
 
-const prop = defineProps<{ text: "documento" | "projeto"; id?: Number }>();
+const prop = defineProps<{ text: "documento" | "projeto" }>();
 
 const emit = defineEmits(["modalToggle", "messageEmitter"]);
 
+// Criar projetos ou documentos, emitindo para a view principal
+let name = "";
+let desc = "";
 async function submitForm(type: typeof prop.text) {
 	let result: any;
 	if (type == "projeto") {
@@ -15,8 +18,6 @@ async function submitForm(type: typeof prop.text) {
 	if (result.code != "error") emit("modalToggle");
 	emit("messageEmitter", result);
 }
-let name = "";
-let desc = "";
 </script>
 
 <template>
@@ -41,7 +42,6 @@ let desc = "";
 				/>
 				<SubmitButton :text="`Criar novo ${prop.text}`" />
 				<SubmitButton :class="'delete'" @clicked="emit('modalToggle')" :text="`Cancelar criação de ${prop.text}`" />
-				<input v-if="prop.id" type="hidden" name="id" :value="prop.id" />
 			</form>
 		</div>
 	</div>
