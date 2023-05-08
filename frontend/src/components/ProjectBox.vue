@@ -43,26 +43,34 @@ const deleteOn = ref(false);
 </script>
 
 <template>
-	<div class="project">
-		<img src="@/assets/folder.svg" />
-		<form @submit.prevent="" v-if="editOn">
-			<Input @emit-values="name = $event" :id="'name'" :name="'name'" :type="'text'" :placeholder="'Digite o novo nome do projeto, max 20 caracteres'" />
-			<SubmitButton @clicked="editProject('name')" :text="'Editar nome'" />
-			<Input @emit-values="desc = $event" :id="'desc'" :name="'desc'" :type="'text'" :placeholder="'Digite uma nova descrição do projeto, max 20 caracteres'" />
-			<SubmitButton @clicked="editProject('desc')" :text="'Editar descrição'" />
-		</form>
-		<div v-else>
-			<h2>{{ project?.name }}</h2>
-			<p>{{ project?.desc }}</p>
+	<RouterLink class="project-link" :to="`/app/${props.project.id}`">
+		<div class="project">
+			<img src="@/assets/project.svg" />
+			<form @submit.prevent="" v-if="editOn">
+				<Input @emit-values="name = $event" :id="'name'" :name="'name'" :type="'text'" :placeholder="'Digite o novo nome do projeto, max 20 caracteres'" />
+				<SubmitButton @click.prevent="" @clicked="editProject('name')" :text="'Editar nome'" />
+				<Input
+					@emit-values="desc = $event"
+					:id="'desc'"
+					:name="'desc'"
+					:type="'text'"
+					:placeholder="'Digite uma nova descrição do projeto, max 20 caracteres'"
+				/>
+				<SubmitButton @click.prevent="" @clicked="editProject('desc')" :text="'Editar descrição'" />
+			</form>
+			<div v-else>
+				<h2>{{ project?.name }}</h2>
+				<p>{{ project?.desc }}</p>
+			</div>
+			<div class="buttons">
+				<button @click.prevent="switchEdit()"><img src="@/assets/project-edit.svg" alt="" /></button>
+				<button @click.prevent="deleteOn = !deleteOn"><img src="@/assets/project-trash.svg" alt="" /></button>
+				<Transition name="fade">
+					<DeletePopover v-if="deleteOn" @cancel-delete="deleteOn = !deleteOn" @delete="deleteProject()" />
+				</Transition>
+			</div>
 		</div>
-		<div class="buttons">
-			<button @click="switchEdit()"><img src="@/assets/edit.svg" alt="" /></button>
-			<button @click="deleteOn = !deleteOn"><img src="@/assets/trash.svg" alt="" /></button>
-			<Transition name="fade">
-				<DeletePopover v-if="deleteOn" @cancel-delete="deleteOn = !deleteOn" @delete="deleteProject()" />
-			</Transition>
-		</div>
-	</div>
+	</RouterLink>
 </template>
 
 <style scoped lang="scss">
@@ -116,5 +124,9 @@ form {
 	img {
 		width: 32px;
 	}
+}
+.project-link {
+	color: inherit;
+	text-decoration: none;
 }
 </style>

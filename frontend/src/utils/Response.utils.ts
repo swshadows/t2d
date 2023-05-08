@@ -46,7 +46,23 @@ export const Messages = {
 				code: "error"
 			},
 			fieldTooLarge: {
-				message: "O campo tem mais que 20 caracteres",
+				message: "Um ou mais campos tem mais que 20 caracteres",
+				code: "error"
+			}
+		}
+	},
+	documentMessages: {
+		error: {
+			missingName: {
+				message: "O nome do documento não foi preenchido",
+				code: "error"
+			},
+			missingDesc: {
+				message: "A descrição do documento não foi preenchida",
+				code: "error"
+			},
+			fieldTooLarge: {
+				message: "Um ou mais campos tem mais que 20 caracteres",
 				code: "error"
 			}
 		}

@@ -1,67 +1,92 @@
 <script setup lang="ts">
-import ProjectBox from "@/components/ProjectBox.vue";
 import CreateModal from "@/components/CreateModal.vue";
 import SpinnerLoad from "@/components/SpinnerLoad.vue";
+import DocumentBox from "@/components/DocumentBox.vue";
 
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import DocumentAPI from "@/api/Document.API";
 
 import { loggedUserStore } from "@/stores/User.store";
-import ProjectAPI from "@/api/Project.API";
 import UserAPI from "@/api/User.API";
 
+const props = defineProps<{ id: string }>();
 const emit = defineEmits(["messageEmitter"]);
 const userStore = loggedUserStore();
 const router = useRouter();
 
 onMounted(async () => {
-	await fetchProjects();
+	await fetchDocuments();
 });
 
-// Pega projetos caso existam e mostra. Caso não, mostra mensagens ou redireciona
-const projects = ref();
-async function fetchProjects() {
+// Pega documentos caso existam e mostra. Caso não, mostra mensagens ou redireciona
+const documents = ref();
+async function fetchDocuments() {
 	userStore.storeLogin(await UserAPI.getSessionStatus());
-	const res = await ProjectAPI.getProjects();
+	const res = await DocumentAPI.getDocuments(Number(props.id));
 	if (res.code == "error") {
-		if (res.apiCode == "notLoggedYet") {
-			router.push({ path: "/" });
-		}
-		projects.value = 0;
+		if (res.apiCode == "notLoggedYet") router.push({ path: "/" });
+		if (res.apiCode == "notOwner") router.push({ path: "/app" });
+		documents.value = 0;
 		emit("messageEmitter", res);
 	} else {
-		projects.value = res;
+		documents.value = res;
 	}
 }
 
 // Passa a mensagem do componente Modal para o listener de mensagens externo na App
 async function messageEmitListener(e: any) {
 	emit("messageEmitter", e);
-	if (e.code != "error") await fetchProjects();
+	if (e.code != "error") await fetchDocuments();
 }
 
-// Alterna visibilidade do modal de criação de projetos
+// Alterna visibilidade do modal de criação de documentos
 const modalOn = ref(false);
 </script>
 
 <template>
 	<SpinnerLoad v-if="!userStore.getUserStore.email" />
 	<div v-else class="app">
-		<div class="projects">
-			<ProjectBox @message-emitter="messageEmitListener($event)" v-for="p in projects" :project="{ name: p.name, desc: p.desc, id: p.id }" />
+		<div class="info-header">
+			<p>Você está visualizando um projeto, <RouterLink to="/app">clique aqui</RouterLink> para voltar aos seus projetos</p>
+		</div>
+		<div class="documents">
+			<DocumentBox
+				@message-emitter="messageEmitListener($event)"
+				v-for="d in documents"
+				:document="{ name: d.name, desc: d.desc, id: d.id }"
+				:project-id="Number(props.id)"
+			/>
 		</div>
 		<div @click="modalOn = !modalOn" class="create">
-			<img src="@/assets/project-create.svg" />
-			<p>Clique aqui para criar um novo projeto</p>
+			<img src="@/assets/document-create.svg" />
+			<p>Clique aqui para criar um novo documento</p>
 		</div>
 	</div>
 	<Transition name="fade">
-		<CreateModal @message-emitter="messageEmitListener($event)" v-if="modalOn" @modal-toggle="modalOn = !modalOn" :text="'projeto'" :type="'create'" />
+		<CreateModal
+			@message-emitter="messageEmitListener($event)"
+			v-if="modalOn"
+			@modal-toggle="modalOn = !modalOn"
+			:text="'documento'"
+			:project-id="Number(props.id)"
+			:type="'create'"
+		/>
 	</Transition>
 </template>
 
 <style scoped lang="scss">
 @import "@/scss/colors.scss";
+
+.info-header {
+	display: flex;
+	padding: 10px;
+	background-color: #616161;
+	border-radius: 8px;
+	a {
+		color: $highlight;
+	}
+}
 
 .app {
 	color: #fff;
@@ -79,7 +104,7 @@ const modalOn = ref(false);
 	gap: 10px;
 }
 
-.projects {
+.documents {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-template-rows: 1fr 1fr;

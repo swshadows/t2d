@@ -14,6 +14,12 @@ const router = createRouter({
 			component: () => import("@/views/ProjectView.vue")
 		},
 		{
+			path: "/app/:id",
+			name: "docs",
+			props: true,
+			component: () => import("@/views/DocumentView.vue")
+		},
+		{
 			path: "/user",
 			name: "user",
 			component: () => import("@/views/UserView.vue")

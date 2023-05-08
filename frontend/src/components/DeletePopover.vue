@@ -5,10 +5,10 @@ const emit = defineEmits(["cancelDelete", "delete"]);
 </script>
 
 <template>
-	<div class="popover">
-		Confirme a deleção do item:
-		<SubmitButton @clicked="emit('cancelDelete')" :text="'Cancelar a deleção'" />
-		<SubmitButton @clicked="emit('delete')" :class="'delete'" :text="'Deletar'" />
+	<div @click.self="emit('cancelDelete')" class="popover">
+		<p>Confirme a deleção do item:</p>
+		<SubmitButton @click.prevent="" @clicked="emit('cancelDelete')" :text="'Cancelar a deleção'" />
+		<SubmitButton @click.prevent="" @clicked="emit('delete')" :class="'delete'" :text="'Deletar'" />
 	</div>
 </template>
 
@@ -17,14 +17,18 @@ const emit = defineEmits(["cancelDelete", "delete"]);
 
 .popover {
 	position: absolute;
+	width: 100%;
+	height: 100%;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	padding: 10px;
-	background-color: rgba($secondary, 0.7);
+	background-color: rgba($secondary, 0.8);
 	border-radius: 6px;
 	display: flex;
 	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 	gap: 10px;
 }
 </style>

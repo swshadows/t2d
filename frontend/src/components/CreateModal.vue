@@ -2,8 +2,9 @@
 import ProjectAPI from "@/api/Project.API";
 import Input from "./Input.vue";
 import SubmitButton from "./SubmitButton.vue";
+import DocumentAPI from "@/api/Document.API";
 
-const prop = defineProps<{ text: "documento" | "projeto" }>();
+const prop = defineProps<{ text: "documento" | "projeto"; projectId?: number }>();
 
 const emit = defineEmits(["modalToggle", "messageEmitter"]);
 
@@ -14,6 +15,8 @@ async function submitForm(type: typeof prop.text) {
 	let result: any;
 	if (type == "projeto") {
 		result = await ProjectAPI.createProject({ name, desc });
+	} else {
+		if (prop.projectId) result = await DocumentAPI.createDocument(prop.projectId, { name, desc });
 	}
 	if (result.code != "error") emit("modalToggle");
 	emit("messageEmitter", result);

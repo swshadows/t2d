@@ -15,7 +15,7 @@ let inputValue = "";
 
 <template>
 	<label :for="prop.id">{{ prop.labelText }}</label>
-	<input :type="prop.type" :name="prop.name" :id="prop.id" :placeholder="prop.placeholder" v-model="inputValue" @input="emitValue()" />
+	<input @click.prevent="" :type="prop.type" :name="prop.name" :id="prop.id" :placeholder="prop.placeholder" v-model="inputValue" @input="emitValue()" />
 </template>
 
 <style scoped lang="scss">
