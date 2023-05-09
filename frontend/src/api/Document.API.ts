@@ -19,17 +19,6 @@ export default class DocumentAPI {
 		}
 	}
 
-	// Pega informações do projeto atual
-	static async getCurrentProject(projectId: number) {
-		// Faz a requisição ao backend
-		try {
-			const docs = await instance.get(`${endpoint}/one/${projectId}`);
-			return docs.data;
-		} catch (error: any) {
-			return MessageSender.returnMessage(error.response);
-		}
-	}
-
 	// Cria documento ao projeto com ID passado dinamicamente pela view ao usuário logado
 	static async createDocument(projectId: number, doc: DocumentCreate) {
 		const name = doc.name.trim();

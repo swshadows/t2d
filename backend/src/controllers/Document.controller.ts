@@ -53,29 +53,6 @@ export default class DocumentController {
 		ResponseUtils.sendMessage(docSuc.documentCreated, req, res);
 	}
 
-	static async getCurrentProject(req: Request, res: Response) {
-		// Checa se o usuário está logado
-		if (!req.session.user) {
-			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
-		}
-
-		// Checa se o ID do projeto foi informado no req.param
-		const { projectId } = req.params;
-		const id = Number(projectId);
-		if (!id) {
-			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
-		}
-
-		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
-		const project = await ProjectUtils.isUserOwner(req.session.user, id, prisma);
-		if (!project) {
-			return ResponseUtils.sendMessage(projErr.notOwner, req, res);
-		}
-
-		// Retorna dados do projeto
-		res.status(200).send(project);
-	}
-
 	static async getProjectDocs(req: Request, res: Response) {
 		// Checa se o usuário está logado
 		if (!req.session.user) {

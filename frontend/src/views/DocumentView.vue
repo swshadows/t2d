@@ -9,6 +9,7 @@ import DocumentAPI from "@/api/Document.API";
 
 import { loggedUserStore } from "@/stores/User.store";
 import UserAPI from "@/api/User.API";
+import ProjectAPI from "@/api/Project.API";
 
 const props = defineProps<{ id: string }>();
 const emit = defineEmits(["messageEmitter"]);
@@ -37,7 +38,7 @@ async function fetchDocuments() {
 		documents.value = res;
 	}
 	// Pega informações do projeto em si
-	res = await DocumentAPI.getCurrentProject(Number(props.id));
+	res = await ProjectAPI.getOneProject(Number(props.id));
 	project.value = res;
 }
 

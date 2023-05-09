@@ -15,7 +15,7 @@
 | `/user/register`       |  `POST`  | `email`, `username`, `password`, `passwordRepeat` | Registra o usuário com `email`, `username`, e comparando `password` com `passwordRepeat`                                          |
 | `/user/login`          |  `POST`  | `login`, `password`                               | Realiza login com `login` (pode ser email ou username) e comparando `password`                                                    |
 | `/user/logout`         |  `POST`  | -                                                 | Realiza logout                                                                                                                    |
-| `/user/:username`      |  `GET`   | -                                                 | Pega informações do usuário com nome `:username`                                                                                  |
+| `/user/:userId`        |  `GET`   | -                                                 | Pega informações do usuário com id = `:userId`                                                                                    |
 | `/user/updateEmail`    |  `PUT`   | `email`                                           | Atualiza email do usuário logado com `email`                                                                                      |
 | `/user/updateUsername` |  `PUT`   | `username`                                        | Atualiza username do usuário logado com `username`                                                                                |
 | `/user/updatePassword` |  `PUT`   | `password`, `newPassword`, `newPasswordRepeat`    | Atualiza senha do usuário logado com `newPassword`, comparando senha antiga com `password` e a nova senha com `newPasswordRepeat` |
@@ -26,6 +26,7 @@
 | Rota                         |   Tipo   | Payload JSON   | Função                                                    |
 | :--------------------------- | :------: | :------------- | :-------------------------------------------------------- |
 | `/project/logged`            |  `GET`   | -              | Pega todos os projetos do usuário logado                  |
+| `/project/:projectId`        |  `GET`   | -              | Pega informações do projeto com id = `:projectId`         |
 | `/project/create`            |  `POST`  | `name`, `desc` | Cria um projeto com `name` e `desc`                       |
 | `/project/updateName`        |  `PUT`   | `name`, `id`   | Atualiza o nome do projeto com `name` onde id = `id`      |
 | `/project/updateDescription` |  `PUT`   | `desc`, `id`   | Atualiza a descrição do projeto com `desc` onde id = `id` |

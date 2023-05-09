@@ -8,7 +8,7 @@
 
 | Nome                                                  | Funções               |
 | :---------------------------------------------------- | :-------------------- |
-| [swshadows](https://github.com/swshadows)             | 🎲 Fullstack & Design |
+| [swshadows](https://github.com/swshadows)             | 🌎 Fullstack & Design |
 | [leonardosilva97](https://github.com/leonardosilva97) | 🎲 Suporte Frontend   |
 | [EndrewDias](https://github.com/EndrewDias)           | 🎲 Suporte Frontend   |
 | [David-TM12](https://github.com/David-TM12)           | 🎲 Suporte Backend    |
@@ -49,6 +49,8 @@
   npm run dev         # Inicializa a API da aplicação
   ```
 
+- Veja mais detalhes da API no [README](./backend/README.md)
+
 #### Frontend
 
 - Crie um arquivo em `frontend` chamado `.env`
@@ -64,6 +66,8 @@
   npm install     # Instala as dependências
   npm run dev     # Inicializa o servidor Vue com Vite
   ```
+
+- Veja mais detalhes da App no [README](./frontend/README.md)
 
 ### Outros Links
 
