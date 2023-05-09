@@ -45,18 +45,22 @@ const deleteOn = ref(false);
 <template>
 	<div class="document">
 		<img src="@/assets/document.svg" />
-		<form @submit.prevent="" v-if="editOn">
-			<Input @emit-values="name = $event" :id="'name'" :name="'name'" :type="'text'" :placeholder="'Digite o novo nome do documento, max 20 caracteres'" />
-			<SubmitButton @clicked="editDocument('name')" :text="'Editar nome'" />
-			<Input
-				@emit-values="desc = $event"
-				:id="'desc'"
-				:name="'desc'"
-				:type="'text'"
-				:placeholder="'Digite uma nova descrição do documento, max 50 caracteres'"
-			/>
-			<SubmitButton @clicked="editDocument('desc')" :text="'Editar descrição'" />
-		</form>
+		<div class="form-wrapper" v-if="editOn">
+			<form @submit.prevent="editDocument('name')">
+				<Input @emit-values="name = $event" :id="'name'" :name="'name'" :type="'text'" :placeholder="'Digite o novo nome do documento, max 20 caracteres'" />
+				<SubmitButton :text="'Editar nome'" />
+			</form>
+			<form @submit.prevent="editDocument('desc')">
+				<Input
+					@emit-values="desc = $event"
+					:id="'desc'"
+					:name="'desc'"
+					:type="'text'"
+					:placeholder="'Digite uma nova descrição do documento, max 50 caracteres'"
+				/>
+				<SubmitButton :text="'Editar descrição'" />
+			</form>
+		</div>
 		<div v-else>
 			<h2>{{ document.name }}</h2>
 			<p>{{ document.desc }}</p>
@@ -106,7 +110,7 @@ const deleteOn = ref(false);
 		width: 120px;
 	}
 }
-form {
+.form-wrapper {
 	width: 90%;
 	display: flex;
 	flex-direction: column;

@@ -4,7 +4,6 @@ import Footer from "./components/Footer.vue";
 import Message from "@/components/Message.vue";
 import { ref } from "vue";
 
-let timeout = ref();
 let result = ref();
 function showMessage(e: any) {
 	result.value = e;

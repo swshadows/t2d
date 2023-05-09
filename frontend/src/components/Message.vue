@@ -1,14 +1,28 @@
 <script setup lang="ts">
 import type { MessageType } from "@/utils/Response.utils";
-import { onMounted } from "vue";
+import { onMounted, onUpdated } from "vue";
 
 defineProps<{ result: MessageType }>();
 const emit = defineEmits(["hideMessage"]);
+
+// Setta o timeout ao iniciar o componente
+let timeout: any;
 onMounted(() => {
-	setTimeout(() => {
+	setTemp();
+});
+
+// Ao emitir um erro, remove e resetta o timeout
+onUpdated(() => {
+	if (timeout) clearTimeout(timeout);
+	setTemp();
+});
+
+// Setta o timeout da mensagem em uma variável
+function setTemp() {
+	timeout = setTimeout(() => {
 		emit("hideMessage");
 	}, 1500);
-});
+}
 </script>
 
 <template>

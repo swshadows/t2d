@@ -45,19 +45,29 @@ const deleteOn = ref(false);
 <template>
 	<div class="project">
 		<img src="@/assets/project.svg" />
-		<form @submit.prevent="" v-if="editOn">
-			<Input @emit-values="name = $event" :id="'name'" :name="'name'" :type="'text'" :placeholder="'Digite o novo nome do projeto, max 20 caracteres'" />
-			<SubmitButton @clicked="editProject('name')" :text="'Editar nome'" />
-			<Input @emit-values="desc = $event" :id="'desc'" :name="'desc'" :type="'text'" :placeholder="'Digite uma nova descrição do projeto, max 50 caracteres'" />
-			<SubmitButton @clicked="editProject('desc')" :text="'Editar descrição'" />
-		</form>
+		<div class="form-wrapper" v-if="editOn">
+			<form @submit.prevent="editProject('name')">
+				<Input @emit-values="name = $event" :id="'name'" :name="'name'" :type="'text'" :placeholder="'Digite o novo nome do projeto, max 20 caracteres'" />
+				<SubmitButton :text="'Editar nome'" />
+			</form>
+			<form @submit.prevent="editProject('desc')">
+				<Input
+					@emit-values="desc = $event"
+					:id="'desc'"
+					:name="'desc'"
+					:type="'text'"
+					:placeholder="'Digite uma nova descrição do projeto, max 50 caracteres'"
+				/>
+				<SubmitButton :text="'Editar descrição'" />
+			</form>
+		</div>
 		<div class="info" v-else>
 			<h2>{{ project.name }}</h2>
 			<p>{{ project.desc }}</p>
 		</div>
 		<div class="buttons">
-			<button @click.prevent="switchEdit()"><img src="@/assets/project-edit.svg" alt="" /></button>
-			<button @click.prevent="deleteOn = !deleteOn"><img src="@/assets/project-trash.svg" alt="" /></button>
+			<button @click.prevent="switchEdit()" :class="editOn ? 'button-active' : ''"><img src="@/assets/project-edit.svg" alt="" /></button>
+			<button @click.prevent="deleteOn = !deleteOn" :class="deleteOn ? 'button-active' : ''"><img src="@/assets/project-trash.svg" alt="" /></button>
 			<RouterLink class="project-link" :to="`/app/${props.project.id}`">
 				<button><img src="@/assets/project-enter.svg" alt="" /></button>
 			</RouterLink>
@@ -96,7 +106,7 @@ const deleteOn = ref(false);
 		width: 120px;
 	}
 }
-form {
+.form-wrapper {
 	width: 90%;
 	display: flex;
 	flex-direction: column;
@@ -110,14 +120,21 @@ form {
 .buttons {
 	display: flex;
 	gap: 10px;
+	align-items: stretch;
 	button {
 		padding: 5px;
 		border-radius: 5px;
 		background-color: transparent;
 		border: 0;
+		display: grid;
+		place-items: center;
 		transition: 0.2s all;
 		&:hover {
 			cursor: pointer;
+			background-color: $secondary;
+		}
+		&.button-active {
+			border: 1px solid $highlight;
 			background-color: $secondary;
 		}
 	}
@@ -125,6 +142,7 @@ form {
 		width: 32px;
 	}
 }
+
 .project-link {
 	color: inherit;
 	text-decoration: none;
