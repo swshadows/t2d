@@ -18,6 +18,16 @@ export default class ProjectAPI {
 		}
 	}
 
+	static async getOneProject(projectId: number) {
+		// Faz a requisição ao backend
+		try {
+			const projects = await instance.get(`${endpoint}/${projectId}`);
+			return projects.data;
+		} catch (error: any) {
+			return MessageSender.returnMessage(error.response);
+		}
+	}
+
 	// Cria projeto no banco ao usuário logado
 	static async createProject(project: ProjectCreate) {
 		const name = project.name.trim();

@@ -14,8 +14,10 @@ const emit = defineEmits(["messageEmitter"]);
 
 const userStore = loggedUserStore();
 
+const awaitingApi = ref(true);
 onMounted(async () => {
 	await getUserData();
+	awaitingApi.value = false;
 });
 
 // Pega os dados da sessão atual
@@ -66,7 +68,7 @@ const deleteVis = ref(false);
 </script>
 
 <template>
-	<SpinnerLoad v-if="!userStore.getUserStore.email" />
+	<SpinnerLoad v-if="awaitingApi" />
 	<div v-else class="app">
 		<div class="forms">
 			<form @submit.prevent="validateForms('email')">

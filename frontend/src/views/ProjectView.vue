@@ -17,8 +17,10 @@ const emit = defineEmits(["messageEmitter"]);
 const userStore = loggedUserStore();
 const router = useRouter();
 
+const awaitingApi = ref(true);
 onMounted(async () => {
 	await fetchProjects();
+	awaitingApi.value = false;
 });
 
 onUpdated(async () => {
@@ -71,7 +73,7 @@ const sharedOn = ref(false);
 </script>
 
 <template>
-	<SpinnerLoad v-if="!userStore.getUserStore.email" />
+	<SpinnerLoad v-if="awaitingApi" />
 	<div v-else class="app">
 		<div class="info-header">
 			<IconButton @click="sharedOn = false" :text="'Meus projetos'" :class="!sharedOn ? 'on' : ''">
@@ -87,7 +89,7 @@ const sharedOn = ref(false);
 		<div v-else class="sharedDocs">
 			<DocumentBox
 				v-for="d in sharedDocs"
-				:document="{ name: d.docName, desc: d.docDesc, id: d.docId, pId: -1, sharedUser: -1 }"
+				:document="{ name: d.docName, desc: d.docDesc, id: d.docId, pId: d.projectId, sharedUser: -1 }"
 				:shared="true"
 				:project-info="{ name: d.projectName, desc: d.projectDesc, owner: d.projectOwner }"
 			/>

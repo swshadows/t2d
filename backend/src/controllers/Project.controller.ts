@@ -28,6 +28,27 @@ export default class ProjectController {
 		res.status(200).json(projects);
 	}
 
+	static async getProject(req: Request, res: Response) {
+		// Checa se o usuário está logado
+		if (!req.session.user) {
+			return ResponseUtils.sendMessage(userErr.notLoggedYet, req, res);
+		}
+
+		// Checa se o id do projeto foi enviado
+		const projectId = Number(req.params.projectId);
+		if (!projectId) {
+			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
+		}
+
+		// Verifica se o projeto existe
+		const project = await prisma.project.findFirst({ where: { id: projectId } });
+		if (!project) {
+			return ResponseUtils.sendMessage(projErr.notFound, req, res);
+		}
+
+		res.status(200).send(project);
+	}
+
 	static async createProject(req: Request, res: Response) {
 		// Checa se o usuário tem permissão de criar um projeto, ou seja, se está logado
 		if (!req.session.user) {

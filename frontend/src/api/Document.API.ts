@@ -106,9 +106,32 @@ export default class DocumentAPI {
 
 	// Pega os documentos compartilhados do usuário logado
 	static async getSharedDocs() {
+		// Faz a requisição ao backend
 		try {
 			const response = await instance.get(`${endpoint}/shared`);
 			return response.data;
+		} catch (error: any) {
+			return MessageSender.returnMessage(error.response);
+		}
+	}
+
+	// Pega o conteudo do documento com ID indicado, confirmando acesso com o ID do projeto
+	static async getDocContent(documentId: number, projectId: number) {
+		// Faz a requisição ao backend
+		try {
+			const response = await instance.get(`${endpoint}/${projectId}/${documentId}`);
+			return response.data;
+		} catch (error: any) {
+			return MessageSender.returnMessage(error.response);
+		}
+	}
+
+	// Salva o conteudo Markdown de um documentoc com ID indicado, confirmando acesso com o ID do projeto
+	static async saveDocContent(content: string, documentId: number, projectId: number) {
+		// Faz a requisição ao backend
+		try {
+			const response = await instance.post(`${endpoint}/save`, { content, documentId, projectId });
+			return MessageSender.returnMessage(response.data);
 		} catch (error: any) {
 			return MessageSender.returnMessage(error.response);
 		}

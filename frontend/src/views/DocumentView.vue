@@ -15,8 +15,10 @@ const emit = defineEmits(["messageEmitter"]);
 const userStore = loggedUserStore();
 const router = useRouter();
 
+const awaitingApi = ref(true);
 onMounted(async () => {
 	await fetchDocuments();
+	awaitingApi.value = false;
 });
 
 // Pega documentos caso existam e mostra. Caso não, mostra mensagens ou redireciona
@@ -50,7 +52,7 @@ const modalOn = ref(false);
 </script>
 
 <template>
-	<SpinnerLoad v-if="!userStore.getUserStore.email" />
+	<SpinnerLoad v-if="awaitingApi" />
 	<div v-else class="app">
 		<div class="info-header">
 			<p>Você está visualizando os documentos de um projeto, <RouterLink to="/app">clique aqui</RouterLink> para ver todos os projetos</p>

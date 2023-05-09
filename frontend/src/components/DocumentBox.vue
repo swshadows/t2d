@@ -94,10 +94,9 @@ const shareOn = ref(false);
 					:shared-user-id="props.document.sharedUser"
 				/>
 			</Transition>
-			<!-- TODO: Create doc content view
-				 <RouterLink class="project-link" :to="`/app/${props.document.pId}/??`">
-				<button><img src="@/assets/document-enter.svg"  /></button>
-			</RouterLink> -->
+			<RouterLink class="project-link" :to="`/app/${props.document.pId}/${props.document.id}`">
+				<button><img src="@/assets/document-enter.svg" /></button>
+			</RouterLink>
 			<Transition name="fade">
 				<DeletePopover v-if="deleteOn" @cancel-delete="deleteOn = !deleteOn" @delete="deleteDocument()" />
 			</Transition>

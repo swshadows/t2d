@@ -32,7 +32,7 @@ model Document {
   id           Int     @id @default(autoincrement())
   name         String
   desc         String
-  content      String? @default("")
+  content      String? @default("") @db.Text
   project      Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId    Int
   sharedUser   User?   @relation(fields: [sharedUserId], references: [id], onDelete: SetNull)

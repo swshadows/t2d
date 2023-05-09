@@ -20,6 +20,12 @@ const router = createRouter({
 			component: () => import("@/views/DocumentView.vue")
 		},
 		{
+			path: "/app/:pId/:dId",
+			name: "docview",
+			props: true,
+			component: () => import("@/views/DocView.vue")
+		},
+		{
 			path: "/user",
 			name: "user",
 			component: () => import("@/views/UserView.vue")

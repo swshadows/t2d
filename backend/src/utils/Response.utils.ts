@@ -140,6 +140,13 @@ export const Messages = {
 					code: "projectsNotFound",
 				},
 			},
+			notFound: {
+				status: 404,
+				json: {
+					error: "Projeto requisitado não encontrado",
+					code: "notFound",
+				},
+			},
 			notOwner: {
 				status: 403,
 				json: {
