@@ -28,5 +28,11 @@ button {
 		cursor: pointer;
 		background-color: $highlight_darker;
 	}
+	&.on {
+		span {
+			text-decoration: underline;
+			color: $main;
+		}
+	}
 }
 </style>

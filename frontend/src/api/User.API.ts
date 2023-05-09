@@ -60,6 +60,17 @@ export default class UserAPI {
 		}
 	}
 
+	// Pega o usuário com o ID definido
+	static async getUser(uId: number) {
+		// Faz a requisição ao backend
+		try {
+			const response = await instance.get(`${endpoint}/${uId}`);
+			return response.data;
+		} catch (error: any) {
+			return MessageSender.returnMessage(error.response);
+		}
+	}
+
 	// Atualiza o email
 	static async updateEmail(email: string) {
 		email = email.trim();

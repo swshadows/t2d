@@ -2,10 +2,16 @@
 import { ref } from "vue";
 import Input from "./Input.vue";
 import SubmitButton from "./SubmitButton.vue";
-import DocumentAPI from "@/api/Document.API";
+import ShareModal from "./ShareModal.vue";
 import DeletePopover from "./DeletePopover.vue";
 
-const props = defineProps<{ document: { name: string; desc: string; id: number; pId: number } }>();
+import DocumentAPI from "@/api/Document.API";
+
+const props = defineProps<{
+	document: { name: string; desc: string; id: number; pId: number; sharedUser: number };
+	shared: boolean;
+	projectInfo?: { name: string; desc: string; owner: string };
+}>();
 
 const emit = defineEmits(["messageEmitter"]);
 
@@ -40,6 +46,9 @@ function switchEdit() {
 
 // Modifica o estado de deleção
 const deleteOn = ref(false);
+
+// Modifica o estado de compartilhamento
+const shareOn = ref(false);
 </script>
 
 <template>
@@ -61,19 +70,33 @@ const deleteOn = ref(false);
 				<SubmitButton :text="'Editar descrição'" />
 			</form>
 		</div>
-		<div v-else>
+		<div class="info" v-else>
 			<h2>{{ document.name }}</h2>
 			<p>{{ document.desc }}</p>
+			<div v-if="props.projectInfo" class="projectInfo">
+				<p>📁 {{ props.projectInfo.name }}, {{ props.projectInfo.desc.toLowerCase() }}</p>
+				<p>
+					Gerido por <span class="owner">@{{ props.projectInfo.owner }}</span>
+				</p>
+			</div>
 		</div>
 		<div class="buttons">
-			<button @click="switchEdit()"><img src="@/assets/document-edit.svg" alt="" /></button>
-			<button @click="deleteOn = !deleteOn"><img src="@/assets/document-trash.svg" alt="" /></button>
-			<!-- TODO: Create doc share function
-				<button @click=""><img src="@/assets/document-share.svg" alt="" /></button>
-			 -->
+			<button v-if="!props.shared" @click="switchEdit()" :class="editOn ? 'button-active' : ''"><img src="@/assets/document-edit.svg" /></button>
+			<button v-if="!props.shared" @click="deleteOn = !deleteOn" :class="deleteOn ? 'button-active' : ''"><img src="@/assets/document-trash.svg" /></button>
+			<button v-if="!props.shared" @click="shareOn = !shareOn" :class="shareOn ? 'button-active' : ''"><img src="@/assets/document-share.svg" /></button>
+			<Transition name="fade">
+				<ShareModal
+					@message-emitter="emit('messageEmitter', $event)"
+					v-if="shareOn"
+					@modal-toggle="shareOn = !shareOn"
+					:d-id="props.document.id"
+					:p-id="props.document.pId"
+					:shared-user-id="props.document.sharedUser"
+				/>
+			</Transition>
 			<!-- TODO: Create doc content view
 				 <RouterLink class="project-link" :to="`/app/${props.document.pId}/??`">
-				<button><img src="@/assets/document-enter.svg" alt="" /></button>
+				<button><img src="@/assets/document-enter.svg"  /></button>
 			</RouterLink> -->
 			<Transition name="fade">
 				<DeletePopover v-if="deleteOn" @cancel-delete="deleteOn = !deleteOn" @delete="deleteDocument()" />
@@ -110,6 +133,21 @@ const deleteOn = ref(false);
 		width: 120px;
 	}
 }
+.info {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	.projectInfo {
+		color: $highlight;
+		padding: 10px;
+		border-radius: 8px;
+		background-color: $secondary;
+	}
+	.owner {
+		text-decoration: underline;
+		color: #fff;
+	}
+}
 .form-wrapper {
 	width: 90%;
 	display: flex;
@@ -124,9 +162,15 @@ const deleteOn = ref(false);
 		border-radius: 5px;
 		background-color: transparent;
 		border: 0;
+		display: grid;
+		place-items: center;
 		transition: 0.2s all;
 		&:hover {
 			cursor: pointer;
+			background-color: $secondary;
+		}
+		&.button-active {
+			border: 1px solid $highlight;
 			background-color: $secondary;
 		}
 	}

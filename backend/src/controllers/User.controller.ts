@@ -125,13 +125,13 @@ export default class UserController {
 		}
 
 		// Checa se foi enviado o nome do usuário
-		const { username } = req.params;
-		if (!username) {
+		const userId = Number(req.params.userId);
+		if (!userId) {
 			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
 		// Procura o usuário de acordo com o req.param enviado
-		const user = await prisma.user.findUnique({ where: { username }, select: { username: true, email: true } });
+		const user = await prisma.user.findUnique({ where: { id: userId }, select: { username: true, email: true } });
 		if (!user) {
 			return ResponseUtils.sendMessage(userErr.userNotFound, req, res);
 		}

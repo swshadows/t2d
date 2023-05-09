@@ -63,7 +63,8 @@ const modalOn = ref(false);
 			<DocumentBox
 				@message-emitter="messageEmitListener($event)"
 				v-for="d in documents"
-				:document="{ name: d.name, desc: d.desc, id: d.id, pId: Number(props.id) }"
+				:document="{ name: d.name, desc: d.desc, id: d.id, pId: Number(props.id), sharedUser: Number(d.sharedUserId) }"
+				:shared="false"
 			/>
 		</div>
 		<div @click="modalOn = !modalOn" class="create">

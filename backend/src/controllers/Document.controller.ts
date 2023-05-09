@@ -96,7 +96,7 @@ export default class DocumentController {
 		}
 
 		// Verifica se existem documentos no projeto
-		const docs = await prisma.document.findMany({ where: { projectId: id }, select: { id: true, name: true, desc: true } });
+		const docs = await prisma.document.findMany({ where: { projectId: id }, select: { id: true, name: true, desc: true, sharedUserId: true } });
 		if (!docs || !docs.length) {
 			return ResponseUtils.sendMessage(docErr.docsNotFound, req, res);
 		}

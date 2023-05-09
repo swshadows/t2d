@@ -66,10 +66,10 @@ const deleteOn = ref(false);
 			<p>{{ project.desc }}</p>
 		</div>
 		<div class="buttons">
-			<button @click.prevent="switchEdit()" :class="editOn ? 'button-active' : ''"><img src="@/assets/project-edit.svg" alt="" /></button>
-			<button @click.prevent="deleteOn = !deleteOn" :class="deleteOn ? 'button-active' : ''"><img src="@/assets/project-trash.svg" alt="" /></button>
+			<button @click.prevent="switchEdit()" :class="editOn ? 'button-active' : ''"><img src="@/assets/project-edit.svg" /></button>
+			<button @click.prevent="deleteOn = !deleteOn" :class="deleteOn ? 'button-active' : ''"><img src="@/assets/project-trash.svg" /></button>
 			<RouterLink class="project-link" :to="`/app/${props.project.id}`">
-				<button><img src="@/assets/project-enter.svg" alt="" /></button>
+				<button><img src="@/assets/project-enter.svg" /></button>
 			</RouterLink>
 			<Transition name="fade">
 				<DeletePopover v-if="deleteOn" @cancel-delete="deleteOn = !deleteOn" @delete="deleteProject()" />

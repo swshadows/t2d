@@ -3,6 +3,7 @@ import type { DocumentCreate } from "@/types/Document.types";
 import instance from "@/utils/axios";
 
 const { error } = Messages.documentMessages;
+const { error: userErr } = Messages.userMessages;
 
 const endpoint = "/doc";
 
@@ -84,6 +85,30 @@ export default class DocumentAPI {
 		try {
 			const response = await instance.delete(`${endpoint}/delete`, { data: { projectId, documentId } });
 			return MessageSender.returnMessage(response.data);
+		} catch (error: any) {
+			return MessageSender.returnMessage(error.response);
+		}
+	}
+
+	// Compartilha um documento passando o ID do documento e confirmando o dono com o ID do projeto
+	static async shareDocument(username: string, projectId: number, documentId: number) {
+		username = username.trim();
+		if (!username) return userErr.missingUsername;
+
+		// Faz a requisição ao backend
+		try {
+			const response = await instance.post(`${endpoint}/share`, { username, projectId, documentId });
+			return MessageSender.returnMessage(response.data);
+		} catch (error: any) {
+			return MessageSender.returnMessage(error.response);
+		}
+	}
+
+	// Pega os documentos compartilhados do usuário logado
+	static async getSharedDocs() {
+		try {
+			const response = await instance.get(`${endpoint}/shared`);
+			return response.data;
 		} catch (error: any) {
 			return MessageSender.returnMessage(error.response);
 		}

@@ -21,7 +21,7 @@ async function doLogout() {
 <template>
 	<header>
 		<div class="brand">
-			<img src="/favicon.svg" alt="" />
+			<img src="/favicon.svg" />
 			<p><router-link class="router-link" to="/">Task 2 Do</router-link></p>
 		</div>
 		<div v-if="userStore.email" class="buttons">
