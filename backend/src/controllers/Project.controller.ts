@@ -40,9 +40,14 @@ export default class ProjectController {
 			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
-		// Checa se um dos argumentos é maior que 20 caracteres
-		if (ProjectUtils.isTheFieldTooBig(name, desc)) {
-			return ResponseUtils.sendMessage(projErr.fieldTooBig, req, res);
+		// Checa se o nome enviado é maior que 20 caracteres
+		if (ProjectUtils.isNameTooBig(name)) {
+			return ResponseUtils.sendMessage(projErr.nameTooBig, req, res);
+		}
+
+		// Checa se a descrição enviada é maior que 50 caracteres
+		if (ProjectUtils.isDescTooBig(desc)) {
+			return ResponseUtils.sendMessage(projErr.descTooBig, req, res);
 		}
 
 		// Cria um projeto para o usuário
@@ -73,9 +78,9 @@ export default class ProjectController {
 			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
-		// Checa se um dos argumentos é maior que 20 caracteres
-		if (ProjectUtils.isTheFieldTooBig(name)) {
-			return ResponseUtils.sendMessage(projErr.fieldTooBig, req, res);
+		// Checa se o nome enviado é maior que 20 caracteres
+		if (ProjectUtils.isNameTooBig(name)) {
+			return ResponseUtils.sendMessage(projErr.nameTooBig, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios
@@ -112,9 +117,9 @@ export default class ProjectController {
 			return ResponseUtils.sendMessage(sysErr.emptyValues, req, res);
 		}
 
-		// Checa se um dos argumentos é maior que 20 caracteres
-		if (ProjectUtils.isTheFieldTooBig(desc)) {
-			return ResponseUtils.sendMessage(projErr.fieldTooBig, req, res);
+		// Checa se a descrição enviada é maior que 50 caracteres
+		if (ProjectUtils.isDescTooBig(desc)) {
+			return ResponseUtils.sendMessage(projErr.descTooBig, req, res);
 		}
 
 		// Verifica se o projeto é do usuário logado, para evitar erros de inexistência e edição de projetos alheios

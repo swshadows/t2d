@@ -41,7 +41,7 @@ async function submitForm(type: typeof prop.text) {
 					:label-text="`Dê uma descrição para o ${prop.text}`"
 					:id="'desc'"
 					:type="'text'"
-					:placeholder="'Máximo de 20 caracteres'"
+					:placeholder="'Máximo de 50 caracteres'"
 				/>
 				<SubmitButton :text="`Criar novo ${prop.text}`" />
 				<SubmitButton :class="'delete'" @clicked="emit('modalToggle')" :text="`Cancelar criação de ${prop.text}`" />

@@ -5,7 +5,7 @@ import SubmitButton from "./SubmitButton.vue";
 import DocumentAPI from "@/api/Document.API";
 import DeletePopover from "./DeletePopover.vue";
 
-const props = defineProps<{ document: { name: string; desc: string; id: number }; projectId: number }>();
+const props = defineProps<{ document: { name: string; desc: string; id: number; pId: number } }>();
 
 const emit = defineEmits(["messageEmitter"]);
 
@@ -15,9 +15,9 @@ let desc = "";
 async function editDocument(data: "name" | "desc") {
 	let response: any;
 	if (data == "name") {
-		response = await DocumentAPI.updateName(name, props.projectId, props.document.id);
+		response = await DocumentAPI.updateName(name, props.document.pId, props.document.id);
 	} else {
-		response = await DocumentAPI.updateDescription(desc, props.projectId, props.document.id);
+		response = await DocumentAPI.updateDescription(desc, props.document.pId, props.document.id);
 	}
 	if (response.code != "error") switchEdit();
 	emit("messageEmitter", response);
@@ -25,7 +25,7 @@ async function editDocument(data: "name" | "desc") {
 
 // Deleta o documento
 async function deleteDocument() {
-	let response = await DocumentAPI.deleteDocument(props.projectId, props.document.id);
+	let response = await DocumentAPI.deleteDocument(props.document.pId, props.document.id);
 	if (response.code != "error") deleteOn.value = !deleteOn.value;
 	emit("messageEmitter", response);
 }
@@ -53,17 +53,24 @@ const deleteOn = ref(false);
 				:id="'desc'"
 				:name="'desc'"
 				:type="'text'"
-				:placeholder="'Digite uma nova descrição do documento, max 20 caracteres'"
+				:placeholder="'Digite uma nova descrição do documento, max 50 caracteres'"
 			/>
 			<SubmitButton @clicked="editDocument('desc')" :text="'Editar descrição'" />
 		</form>
 		<div v-else>
-			<h2>{{ document?.name }}</h2>
-			<p>{{ document?.desc }}</p>
+			<h2>{{ document.name }}</h2>
+			<p>{{ document.desc }}</p>
 		</div>
 		<div class="buttons">
 			<button @click="switchEdit()"><img src="@/assets/document-edit.svg" alt="" /></button>
 			<button @click="deleteOn = !deleteOn"><img src="@/assets/document-trash.svg" alt="" /></button>
+			<!-- TODO: Create doc share function
+				<button @click=""><img src="@/assets/document-share.svg" alt="" /></button>
+			 -->
+			<!-- TODO: Create doc content view
+				 <RouterLink class="project-link" :to="`/app/${props.document.pId}/??`">
+				<button><img src="@/assets/document-enter.svg" alt="" /></button>
+			</RouterLink> -->
 			<Transition name="fade">
 				<DeletePopover v-if="deleteOn" @cancel-delete="deleteOn = !deleteOn" @delete="deleteDocument()" />
 			</Transition>

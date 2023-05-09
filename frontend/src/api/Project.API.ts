@@ -25,7 +25,8 @@ export default class ProjectAPI {
 
 		if (!name) return error.missingName;
 		if (!desc) return error.missingDesc;
-		if (name.length > 20 || desc.length > 20) return error.fieldTooLarge;
+		if (name.length > 20) return error.nameTooBig;
+		if (desc.length > 50) return error.descTooBig;
 
 		// Faz a requisição ao backend
 		try {
@@ -40,7 +41,7 @@ export default class ProjectAPI {
 	static async updateName(name: string, id: number) {
 		name = name.trim();
 		if (!name) return error.missingName;
-		if (name.length > 20) return error.fieldTooLarge;
+		if (name.length > 20) return error.nameTooBig;
 
 		// Faz a requisição ao backend
 		try {
@@ -55,7 +56,7 @@ export default class ProjectAPI {
 	static async updateDescription(desc: string, id: number) {
 		desc = desc.trim();
 		if (!desc) return error.missingDesc;
-		if (desc.length > 20) return error.fieldTooLarge;
+		if (desc.length > 50) return error.descTooBig;
 
 		// Faz a requisição ao backend
 		try {

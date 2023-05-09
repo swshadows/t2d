@@ -147,11 +147,18 @@ export const Messages = {
 					code: "notOwner",
 				},
 			},
-			fieldTooBig: {
+			nameTooBig: {
 				status: 400,
 				json: {
-					error: "Um dos campos enviados ultrapassa o limite de 20 caracteres",
-					code: "fieldTooBig",
+					error: "O nome enviado ultrapassa o limite de 20 caracteres",
+					code: "nameTooBig",
+				},
+			},
+			descTooBig: {
+				status: 400,
+				json: {
+					error: "A descrição enviada ultrapassa o limite de 50 caracteres",
+					code: "descTooBig",
 				},
 			},
 		},
@@ -239,11 +246,18 @@ export const Messages = {
 					code: "contentFieldUndefined",
 				},
 			},
-			fieldTooBig: {
+			nameTooBig: {
 				status: 400,
 				json: {
-					error: "Um dos campos enviados ultrapassa o limite de 20 caracteres",
-					code: "fieldTooBig",
+					error: "O nome enviado ultrapassa o limite de 20 caracteres",
+					code: "nameTooBig",
+				},
+			},
+			descTooBig: {
+				status: 400,
+				json: {
+					error: "A descrição enviada ultrapassa o limite de 50 caracteres",
+					code: "descTooBig",
 				},
 			},
 		},

@@ -45,8 +45,12 @@ export const Messages = {
 				message: "A descrição do projeto não foi preenchida",
 				code: "error"
 			},
-			fieldTooLarge: {
-				message: "Um ou mais campos tem mais que 20 caracteres",
+			nameTooBig: {
+				message: "O nome tem mais que 20 caracteres",
+				code: "error"
+			},
+			descTooBig: {
+				message: "A descrição tem mais que 50 caracteres",
 				code: "error"
 			}
 		}
@@ -61,8 +65,12 @@ export const Messages = {
 				message: "A descrição do documento não foi preenchida",
 				code: "error"
 			},
-			fieldTooLarge: {
-				message: "Um ou mais campos tem mais que 20 caracteres",
+			nameTooBig: {
+				message: "O nome tem mais que 20 caracteres",
+				code: "error"
+			},
+			descTooBig: {
+				message: "A descrição tem mais que 50 caracteres",
 				code: "error"
 			}
 		}

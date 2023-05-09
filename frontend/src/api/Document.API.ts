@@ -18,6 +18,17 @@ export default class DocumentAPI {
 		}
 	}
 
+	// Pega informações do projeto atual
+	static async getCurrentProject(projectId: number) {
+		// Faz a requisição ao backend
+		try {
+			const docs = await instance.get(`${endpoint}/one/${projectId}`);
+			return docs.data;
+		} catch (error: any) {
+			return MessageSender.returnMessage(error.response);
+		}
+	}
+
 	// Cria documento ao projeto com ID passado dinamicamente pela view ao usuário logado
 	static async createDocument(projectId: number, doc: DocumentCreate) {
 		const name = doc.name.trim();
@@ -25,7 +36,8 @@ export default class DocumentAPI {
 
 		if (!name) return error.missingName;
 		if (!desc) return error.missingDesc;
-		if (name.length > 20 || desc.length > 20) return error.fieldTooLarge;
+		if (name.length > 20) return error.nameTooBig;
+		if (desc.length > 50) return error.descTooBig;
 
 		// Faz a requisição ao backend
 		try {
@@ -40,7 +52,7 @@ export default class DocumentAPI {
 	static async updateName(name: string, projectId: number, documentId: number) {
 		name = name.trim();
 		if (!name) return error.missingName;
-		if (name.length > 20) return error.fieldTooLarge;
+		if (name.length > 20) return error.nameTooBig;
 
 		// Faz a requisição ao backend
 		try {
@@ -55,7 +67,7 @@ export default class DocumentAPI {
 	static async updateDescription(desc: string, projectId: number, documentId: number) {
 		desc = desc.trim();
 		if (!desc) return error.missingDesc;
-		if (desc.length > 20) return error.fieldTooLarge;
+		if (desc.length > 50) return error.descTooBig;
 
 		// Faz a requisição ao backend
 		try {

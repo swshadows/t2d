@@ -20,10 +20,12 @@ onMounted(async () => {
 });
 
 // Pega documentos caso existam e mostra. Caso não, mostra mensagens ou redireciona
+const project = ref();
 const documents = ref();
 async function fetchDocuments() {
+	// Pega documentos do projeto
 	userStore.storeLogin(await UserAPI.getSessionStatus());
-	const res = await DocumentAPI.getDocuments(Number(props.id));
+	let res = await DocumentAPI.getDocuments(Number(props.id));
 	if (res.code == "error") {
 		if (res.apiCode == "notLoggedYet") router.push({ path: "/" });
 		if (res.apiCode == "notOwner") router.push({ path: "/app" });
@@ -32,6 +34,9 @@ async function fetchDocuments() {
 	} else {
 		documents.value = res;
 	}
+	// Pega informações do projeto em si
+	res = await DocumentAPI.getCurrentProject(Number(props.id));
+	project.value = res;
 }
 
 // Passa a mensagem do componente Modal para o listener de mensagens externo na App
@@ -48,14 +53,17 @@ const modalOn = ref(false);
 	<SpinnerLoad v-if="!userStore.getUserStore.email" />
 	<div v-else class="app">
 		<div class="info-header">
-			<p>Você está visualizando um projeto, <RouterLink to="/app">clique aqui</RouterLink> para voltar aos seus projetos</p>
+			<p>Você está visualizando os documentos de um projeto, <RouterLink to="/app">clique aqui</RouterLink> para ver todos os projetos</p>
+			<div v-if="project" class="project-details-wrapper">
+				<span>📁 {{ project.name }}</span>
+				<span>, {{ project.desc.toLowerCase() }}</span>
+			</div>
 		</div>
 		<div class="documents">
 			<DocumentBox
 				@message-emitter="messageEmitListener($event)"
 				v-for="d in documents"
-				:document="{ name: d.name, desc: d.desc, id: d.id }"
-				:project-id="Number(props.id)"
+				:document="{ name: d.name, desc: d.desc, id: d.id, pId: Number(props.id) }"
 			/>
 		</div>
 		<div @click="modalOn = !modalOn" class="create">
@@ -81,6 +89,7 @@ const modalOn = ref(false);
 .info-header {
 	display: flex;
 	padding: 10px;
+	flex-direction: column;
 	background-color: #616161;
 	border-radius: 8px;
 	a {
@@ -102,6 +111,10 @@ const modalOn = ref(false);
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
+}
+
+.project-details-wrapper {
+	color: $highlight;
 }
 
 .documents {

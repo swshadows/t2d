@@ -10,11 +10,13 @@ export default class ProjectUtils {
 		} else return findProject;
 	}
 
-	// Checa se o item enviado tem mais que 20 caracteres
-	static isTheFieldTooBig(...fields: string[]) {
-		const arr = fields.map((item) => {
-			return item.length > 20;
-		});
-		return arr.includes(true);
+	// Checa se o nome enviado tem mais que 20 caracteres
+	static isNameTooBig(name: string) {
+		return name.length > 20;
+	}
+
+	// Checa se a descrição enviada tem mais que 50 caracteres
+	static isDescTooBig(desc: string) {
+		return desc.length > 50;
 	}
 }
