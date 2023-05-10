@@ -93,6 +93,17 @@ export default class DocumentAPI {
 		}
 	}
 
+	// Remove o acesso compartilhado
+	static async revokeAccess(projectId: number, documentId: number) {
+		// Faz a requisição ao backend
+		try {
+			const response = await instance.put(`${endpoint}/revoke`, { projectId, documentId });
+			return MessageSender.returnMessage(response.data);
+		} catch (error: any) {
+			return MessageSender.returnMessage(error.response);
+		}
+	}
+
 	// Pega os documentos compartilhados do usuário logado
 	static async getSharedDocs() {
 		// Faz a requisição ao backend

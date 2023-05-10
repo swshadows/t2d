@@ -24,6 +24,13 @@ onMounted(async () => {
 		if (result.code != "error") user.value = result.username;
 	}
 });
+
+// Remove acesso do usuário compartilhado
+async function revokeAccess() {
+	const result = await DocumentAPI.revokeAccess(prop.pId, prop.dId);
+	if (result.code != "error") emit("modalToggle");
+	emit("messageEmitter", result);
+}
 </script>
 
 <template>
@@ -42,6 +49,9 @@ onMounted(async () => {
 					:placeholder="'Digite o nome do usuário'"
 				/>
 				<SubmitButton :text="'Compartilhar documento'" />
+				<form @submit.prevent="revokeAccess()">
+					<SubmitButton :class="'warning'" v-if="prop.sharedUserId" :text="`Revogar acesso à ${user}`" />
+				</form>
 				<SubmitButton :class="'delete'" @clicked="emit('modalToggle')" :text="'Cancelar compartilhamento'" />
 			</form>
 		</div>

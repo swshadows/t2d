@@ -23,6 +23,13 @@ button {
 		cursor: pointer;
 		background: $main_darker;
 	}
+	&.warning {
+		background-color: #ffc302;
+		&:hover {
+			border-color: lighten(#ffc302, 20);
+			background-color: darken(#ffc302, 20);
+		}
+	}
 	&.delete {
 		background-color: $danger;
 		&:hover {

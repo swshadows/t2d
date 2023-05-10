@@ -10,9 +10,11 @@
 
 <style scoped lang="scss">
 @import "@/scss/colors.scss";
+@import "@/scss/responsive.scss";
+
 .app {
 	color: #fff;
-	width: 50%;
+	width: 80%;
 	max-height: 75vh;
 	padding: 30px;
 	background: $secondary;
@@ -30,6 +32,9 @@
 	transition: 0.2s all;
 	&:hover {
 		transform: scale(1.1);
+	}
+	@include mobile {
+		width: 45%;
 	}
 }
 .wrapper {

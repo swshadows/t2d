@@ -117,6 +117,7 @@ async function saveContent() {
 }
 
 .editors-wrapper {
+	padding: 0 5px;
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	justify-items: center;
@@ -144,6 +145,11 @@ async function saveContent() {
 		cursor: pointer;
 		background-color: #616161;
 	}
+	@include mobile {
+		bottom: 0%;
+		left: 50%;
+		transform: translateX(-50%);
+	}
 }
 
 .editor,
@@ -164,7 +170,6 @@ async function saveContent() {
 
 .markdown-viewer {
 	background-color: #616161;
-	height: 100%;
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 	font-size: initial;
 	font-weight: initial;
