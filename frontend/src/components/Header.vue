@@ -44,6 +44,7 @@ async function doLogout() {
 
 <style scoped lang="scss">
 @import "@/scss/colors.scss";
+@import "@/scss/responsive.scss";
 
 header {
 	display: flex;
@@ -57,6 +58,9 @@ header {
 	position: fixed;
 	top: 0;
 	z-index: 1;
+	@include mobile {
+		height: 40px;
+	}
 }
 
 .router-link {

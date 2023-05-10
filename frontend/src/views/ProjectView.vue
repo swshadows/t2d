@@ -106,11 +106,12 @@ const sharedOn = ref(false);
 
 <style scoped lang="scss">
 @import "@/scss/colors.scss";
+@import "@/scss/responsive.scss";
 
 .app {
 	color: #fff;
 	width: 90%;
-	max-height: 80vh;
+	max-height: 75vh;
 	padding: 10px;
 	background: $secondary;
 	border-radius: 7px;
@@ -138,6 +139,9 @@ const sharedOn = ref(false);
 	grid-template-rows: 1fr 1fr;
 	overflow: auto;
 	gap: 50px;
+	@include mobile {
+		grid-template-columns: 1fr;
+	}
 }
 
 .create {

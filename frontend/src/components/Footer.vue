@@ -7,6 +7,7 @@
 
 <style scoped lang="scss">
 @import "@/scss/colors.scss";
+@import "@/scss/responsive.scss";
 
 footer {
 	display: flex;
@@ -20,5 +21,8 @@ footer {
 	position: fixed;
 	bottom: 0;
 	z-index: 1;
+	@include mobile {
+		height: 40px;
+	}
 }
 </style>

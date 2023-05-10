@@ -89,6 +89,7 @@ const modalOn = ref(false);
 
 <style scoped lang="scss">
 @import "@/scss/colors.scss";
+@import "@/scss/responsive.scss";
 
 .info-header {
 	display: flex;
@@ -104,7 +105,7 @@ const modalOn = ref(false);
 .app {
 	color: #fff;
 	width: 90%;
-	max-height: 80vh;
+	max-height: 75vh;
 	padding: 10px;
 	background: $secondary;
 	border-radius: 7px;
@@ -123,10 +124,13 @@ const modalOn = ref(false);
 
 .documents {
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-columns: 1fr 1fr 1fr 1fr;
 	grid-template-rows: 1fr 1fr;
 	overflow: auto;
 	gap: 50px;
+	@include mobile {
+		grid-template-columns: 1fr;
+	}
 }
 
 .create {

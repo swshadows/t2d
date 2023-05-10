@@ -139,6 +139,7 @@ const deleteVis = ref(false);
 .app {
 	color: #fff;
 	width: 80%;
+	max-height: 75vh;
 	padding: 20px 10px;
 	background: $secondary;
 	border-radius: 7px;
@@ -153,7 +154,8 @@ const deleteVis = ref(false);
 	gap: 20px;
 }
 .forms {
-	width: 50%;
+	width: 100%;
+	overflow: auto;
 }
 form,
 .wrapper {

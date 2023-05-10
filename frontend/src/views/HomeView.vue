@@ -146,10 +146,12 @@ async function validateForms(formType: "login" | "register") {
 
 <style scoped lang="scss">
 @import "@/scss/colors.scss";
+@import "@/scss/responsive.scss";
 
 .app {
 	color: #fff;
 	width: 80%;
+	max-height: 75vh;
 	background: $secondary;
 	border-radius: 7px;
 	position: absolute;
@@ -161,14 +163,26 @@ async function validateForms(formType: "login" | "register") {
 	justify-content: center;
 	gap: 50px;
 	place-items: center;
+	@include mobile {
+		flex-direction: column;
+		align-items: center;
+	}
 }
 .divider {
 	width: 1px;
 	height: 400px;
 	background-color: $secondary_darker;
+	@include mobile {
+		width: 90%;
+		height: 1px;
+	}
 }
 .forms {
 	width: 30%;
+	overflow: auto;
+	@include mobile {
+		width: 90%;
+	}
 	form {
 		display: flex;
 		flex-direction: column;

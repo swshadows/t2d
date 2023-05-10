@@ -83,6 +83,7 @@ async function saveContent() {
 
 <style scoped lang="scss">
 @import "@/scss/colors.scss";
+@import "@/scss/responsive.scss";
 
 .app {
 	color: #fff;
@@ -121,6 +122,11 @@ async function saveContent() {
 	justify-items: center;
 	gap: 10px;
 	overflow: auto;
+	@include mobile {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 }
 
 .save {

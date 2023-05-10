@@ -13,7 +13,7 @@
 .app {
 	color: #fff;
 	width: 50%;
-	max-height: 80vh;
+	max-height: 75vh;
 	padding: 30px;
 	background: $secondary;
 	border-radius: 7px;
