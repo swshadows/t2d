@@ -20,12 +20,8 @@ const router = useRouter();
 const awaitingApi = ref(true);
 onMounted(async () => {
 	await fetchProjects();
+	await fetchSharedDocs();
 	awaitingApi.value = false;
-});
-
-onUpdated(async () => {
-	if (sharedOn.value == true) await fetchSharedDocs();
-	else await fetchProjects();
 });
 
 // Pega projetos caso existam e mostra. Caso não, mostra mensagens ou redireciona
@@ -37,8 +33,8 @@ async function fetchProjects() {
 		if (res.apiCode == "notLoggedYet") {
 			router.push({ path: "/" });
 		}
+		if (res.status != 404) emit("messageEmitter", res);
 		projects.value = 0;
-		emit("messageEmitter", res);
 	} else {
 		projects.value = res;
 	}
@@ -49,11 +45,9 @@ const sharedDocs = ref();
 async function fetchSharedDocs() {
 	const res = await DocumentAPI.getSharedDocs();
 	if (res.code == "error") {
-		if (res.apiCode == "notLoggedYet") {
-			router.push({ path: "/" });
-		}
+		if (res.apiCode == "notLoggedYet") router.push({ path: "/" });
+		if (res.status != 404) emit("messageEmitter", res);
 		sharedDocs.value = 0;
-		emit("messageEmitter", res);
 	} else {
 		sharedDocs.value = res;
 	}
@@ -84,9 +78,11 @@ const sharedOn = ref(false);
 			</IconButton>
 		</div>
 		<div v-if="!sharedOn" class="projects">
+			<p v-if="!projects">Não há projetos registrados</p>
 			<ProjectBox @message-emitter="messageEmitListener($event)" v-for="p in projects" :project="{ name: p.name, desc: p.desc, id: p.id }" />
 		</div>
 		<div v-else class="sharedDocs">
+			<p v-if="!sharedDocs">Não há documentos compartilhados registrados</p>
 			<DocumentBox
 				v-for="d in sharedDocs"
 				:document="{ name: d.docName, desc: d.docDesc, id: d.docId, pId: d.projectId, sharedUser: -1 }"

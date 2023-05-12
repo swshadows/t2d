@@ -11,7 +11,7 @@ const emit = defineEmits(["modalToggle", "messageEmitter"]);
 // Compartilha documento
 let username = "";
 async function submitForm() {
-	const result = await DocumentAPI.shareDocument(username, prop.pId, prop.dId);
+	const result = await DocumentAPI.shareDocument(username.toLowerCase(), prop.pId, prop.dId);
 	if (result.code != "error") emit("modalToggle");
 	emit("messageEmitter", result);
 }
@@ -34,7 +34,7 @@ async function revokeAccess() {
 </script>
 
 <template>
-	<div @click.self="emit('modalToggle')" class="backdrop">
+	<div class="backdrop">
 		<div class="modal">
 			<p v-if="prop.sharedUserId">
 				Já compartilhado com <span class="sharedWith">{{ user }}</span>
@@ -76,7 +76,7 @@ async function revokeAccess() {
 	width: 40%;
 	background: #fff;
 	border-radius: 5px;
-	padding: 20px;
+	padding: 20px 70px;
 	color: #000;
 	.sharedWith {
 		color: $danger;

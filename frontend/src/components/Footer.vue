@@ -1,6 +1,7 @@
 <template>
 	<footer>
 		<p>Todos os direitos reservados ©</p>
+		<p>Tecnologia dinamizando o desenvolvimento</p>
 		<p>Equipe T2D, 2022</p>
 	</footer>
 </template>

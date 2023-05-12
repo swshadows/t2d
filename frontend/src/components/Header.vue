@@ -13,15 +13,17 @@ const emit = defineEmits(["messageEmitter"]);
 async function doLogout() {
 	const res = await UserAPI.logoutUser();
 	emit("messageEmitter", res);
-	userStore.removeLogin();
-	router.push({ path: "/" });
+	if (res.code != "error") {
+		userStore.removeLogin();
+		router.push({ path: "/" });
+	}
 }
 </script>
 
 <template>
 	<header>
 		<div class="brand">
-			<img src="/favicon.svg" />
+			<img src="/favicon.png" />
 			<p><router-link class="router-link" to="/">Task 2 Do</router-link></p>
 		</div>
 		<div v-if="userStore.email" class="buttons">

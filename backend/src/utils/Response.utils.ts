@@ -205,14 +205,14 @@ export const Messages = {
 	documentMessages: {
 		error: {
 			docNotFound: {
-				status: 400,
+				status: 404,
 				json: {
 					error: "O documento requisitado não existe no projeto",
 					code: "docNotFound",
 				},
 			},
 			docsNotFound: {
-				status: 400,
+				status: 404,
 				json: {
 					error: "Não existem documentos para o projeto solicitado",
 					code: "docsNotFound",
@@ -226,7 +226,7 @@ export const Messages = {
 				},
 			},
 			docsSharedNotFound: {
-				status: 400,
+				status: 404,
 				json: {
 					error: "Não existem documentos compartilhados com o usuário",
 					code: "docsSharedNotFound",

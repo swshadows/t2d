@@ -8,6 +8,7 @@
 		"dev": "nodemon src/app.ts",
 		"build": "npx tsc",
 		"start": "node ./dist/app.js",
+		"db:gen": "npx prisma generate",
 		"db:migrate": "npx prisma migrate dev --name latest",
 		"db:reset": "npx prisma migrate reset"
 	},

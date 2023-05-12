@@ -112,7 +112,7 @@ export default class DocumentController {
 		}
 
 		// Checa se o usuário enviado é diferente do logado
-		if (req.session.user.username == username) {
+		if (req.session.user.username.toLowerCase() == username.toLowerCase()) {
 			return ResponseUtils.sendMessage(docErr.cantShareWithSelf, req, res);
 		}
 

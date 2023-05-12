@@ -2,7 +2,9 @@
 
 🌎 Aplicação Web com frontend e backend desenvolvidos com o intuito de melhorar a gerência de projetos em trabalhos colaborativos, usando uma interface moderna e intuitiva
 
-- [ ] TODO: Banner da aplicação
+<div align='center'>
+  <img src="./app-banner.png" width='500px' />
+</div>
 
 ## Equipe de Desenvolvimento
 
@@ -45,6 +47,7 @@
   ```bash
   cd ./backend        # Acessa a pasta do backend
   npm install         # Instala as dependências
+  npm run db:gen      # Gera as dependências do Prisma
   npm run db:migrate  # Inicializa o banco de dados
   npm run dev         # Inicializa a API da aplicação
   ```

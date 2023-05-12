@@ -24,7 +24,7 @@ async function submitForm(type: typeof prop.text) {
 </script>
 
 <template>
-	<div @click.self="emit('modalToggle')" class="backdrop">
+	<div class="backdrop">
 		<div class="modal">
 			<form @submit.prevent="submitForm(prop.text)">
 				<Input

@@ -24,10 +24,10 @@ button {
 		background: $main_darker;
 	}
 	&.warning {
-		background-color: #ffc302;
+		background-color: #cc9c01;
 		&:hover {
-			border-color: lighten(#ffc302, 20);
-			background-color: darken(#ffc302, 20);
+			border-color: lighten(#ffc301, 20);
+			background-color: darken(#cc9c01, 20);
 		}
 	}
 	&.delete {

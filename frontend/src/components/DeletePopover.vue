@@ -5,7 +5,7 @@ const emit = defineEmits(["cancelDelete", "delete"]);
 </script>
 
 <template>
-	<div @click.self="emit('cancelDelete')" class="popover">
+	<div class="popover">
 		<p>Confirme a deleção do item:</p>
 		<SubmitButton @clicked="emit('cancelDelete')" :text="'Cancelar a deleção'" />
 		<SubmitButton @clicked="emit('delete')" :class="'delete'" :text="'Deletar'" />

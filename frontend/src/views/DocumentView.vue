@@ -32,8 +32,8 @@ async function fetchDocuments() {
 	if (res.code == "error") {
 		if (res.apiCode == "notLoggedYet") router.push({ path: "/" });
 		if (res.apiCode == "notOwner") router.push({ path: "/app" });
+		if (res.status != 404) emit("messageEmitter", res);
 		documents.value = 0;
-		emit("messageEmitter", res);
 	} else {
 		documents.value = res;
 	}
@@ -63,6 +63,7 @@ const modalOn = ref(false);
 			</div>
 		</div>
 		<div class="documents">
+			<p v-if="!documents">Não há documentos registrados neste projeto</p>
 			<DocumentBox
 				@message-emitter="messageEmitListener($event)"
 				v-for="d in documents"
