@@ -2,18 +2,22 @@
 
 🌎 Aplicação Web com frontend e backend desenvolvidos com o intuito de melhorar a gerência de projetos em trabalhos colaborativos, usando uma interface moderna e intuitiva
 
+**Indice**
+
+1. [Documentação](#documentação-oficial)
+2. [Inicialização](#inicialização)
+   1. [Requisitos](#requisitos)
+   2. [Backend](#backend)
+   3. [Frontend](#frontend)
+3. [Outros Links](#outros-links)
+
 <div align='center'>
   <img src="./app-banner.png" width='500px' />
 </div>
 
-## Equipe de Desenvolvimento
+## Documentação Oficial
 
-| Nome                                                  | Funções               |
-| :---------------------------------------------------- | :-------------------- |
-| [swshadows](https://github.com/swshadows)             | 🌎 Fullstack & Design |
-| [leonardosilva97](https://github.com/leonardosilva97) | 🎲 Suporte Frontend   |
-| [EndrewDias](https://github.com/EndrewDias)           | 🎲 Suporte Frontend   |
-| [David-TM12](https://github.com/David-TM12)           | 🎲 Suporte Backend    |
+- 📄 Acesse a nossa [documentação oficial](./DOCUMENTATION.md)
 
 ## Inicialização
 
@@ -21,7 +25,7 @@
 
 ### Requisitos
 
-[Node.js](https://nodejs.org/) & [MySQL](https://www.mysql.com)
+[Node.js](https://nodejs.org/) & [MariaDB](https://mariadb.org)
 
 </div>
 
@@ -32,7 +36,7 @@
   cd t2d
   ```
 
-#### Backend
+### Backend
 
 - Crie um arquivo em `backend` chamado `.env`
 
@@ -54,7 +58,7 @@
 
 - Veja mais detalhes da API no [README](./backend/README.md)
 
-#### Frontend
+### Frontend
 
 - Crie um arquivo em `frontend` chamado `.env`
 
@@ -72,7 +76,7 @@
 
 - Veja mais detalhes da App no [README](./frontend/README.md)
 
-### Outros Links
+## Outros Links
 
 <div align="center">
   <a href="https://www.figma.com/file/CDndKafGEFGguqoAbOHAy6/t2d?node-id=0%3A1&t=uzCfg4433CiQfOc2-1">

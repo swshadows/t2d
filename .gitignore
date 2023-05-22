@@ -31,3 +31,4 @@ coverage
 *.env*
 */prisma/migrations
 dist
+*.ps1

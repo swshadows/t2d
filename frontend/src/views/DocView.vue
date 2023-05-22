@@ -65,8 +65,10 @@ async function saveContent() {
 	<div v-else class="app">
 		<div class="info-header">
 			<p>
-				Você está visualizando o conteudo de um documento, <RouterLink :to="`/app/${props.pId}`">clique aqui</RouterLink> para ver todos os documentos desse
-				projeto
+				Você está visualizando o conteudo de um documento,
+				<span v-if="project && project.userId == userStore.id">
+					<RouterLink :to="`/app/${props.pId}`">clique aqui</RouterLink> para ver todos os documentos desse projeto </span
+				><span v-else><RouterLink to="/app">clique aqui</RouterLink> para voltar a app</span>
 			</p>
 			<div v-if="doc && project" class="doc-details-wrapper">
 				<span>📄 {{ doc.name }}</span>
