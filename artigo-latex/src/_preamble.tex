@@ -1,0 +1,38 @@
+% Tipo do documento
+\documentclass[12pt, a4paper]{article}
+
+%Pacote de linguagem
+\usepackage[utf8]{inputenc}
+
+%Regras da ABNT
+\usepackage[lmargin=3cm, rmargin=2cm, tmargin=3cm, bmargin=2cm]{geometry}
+\usepackage[onehalfspacing]{setspace}
+\usepackage[brazil]{babel}
+\usepackage{fancyhdr}
+\fancypagestyle{plain}{%
+	\fancyhf{}
+	\renewcommand{\headrulewidth}{0pt}
+  \fancyfoot[R]{\thepage}
+}
+\pagestyle{plain}
+
+%Importando pacote de fontes
+\usepackage{mathptmx}
+\usepackage{fontspec}
+
+\setmainfont{Times New Roman}
+
+
+%Importando bibliotecas essenciais
+\usepackage{graphicx, xcolor, comment, indentfirst, enumerate, multirow, multicol, color, hyperref, float}
+
+%Importante bibliotecas matemáticas
+\usepackage{amsmath, amsthm, amsfonts, amssymb, dsfont, mathtools}
+
+%Comandos novos
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\newcommand{\Todo}[1]{\texttt{\colorbox{yellow}{#1}}}
+
+\title{My Title}
+\begin{document}
