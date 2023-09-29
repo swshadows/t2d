@@ -33,18 +33,16 @@ async function submitForm(type: typeof prop.text) {
 					:label-text="`Dê um nome para o ${prop.text}`"
 					:id="'title'"
 					:type="'text'"
-					:placeholder="'Máximo de 20 caracteres'"
-				/>
+					:placeholder="'Máximo de 20 caracteres'" />
 				<Input
 					@emit-values="desc = $event"
 					:name="'desc'"
 					:label-text="`Dê uma descrição para o ${prop.text}`"
 					:id="'desc'"
 					:type="'text'"
-					:placeholder="'Máximo de 50 caracteres'"
-				/>
-				<SubmitButton :text="`Criar novo ${prop.text}`" />
-				<SubmitButton :class="'delete'" @clicked="emit('modalToggle')" :text="`Cancelar criação de ${prop.text}`" />
+					:placeholder="'Máximo de 50 caracteres'" />
+				<SubmitButton :class="'confirm'" :text="`Criar novo ${prop.text}`" />
+				<SubmitButton @clicked="emit('modalToggle')" :text="`Cancelar criação de ${prop.text}`" />
 			</form>
 		</div>
 	</div>

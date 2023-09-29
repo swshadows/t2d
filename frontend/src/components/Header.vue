@@ -28,7 +28,7 @@ async function doLogout() {
 		</div>
 		<div v-if="userStore.email" class="buttons">
 			<router-link class="router-link null" to="/app">
-				<icon-button :text="'App'">
+				<icon-button :text="'Meus projetos'">
 					<img src="@/assets/app-button-icon.svg" />
 				</icon-button>
 			</router-link>

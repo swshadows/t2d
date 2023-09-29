@@ -46,13 +46,12 @@ async function revokeAccess() {
 					:label-text="'Digite o nome do usuário que deseja compartilhar o documento:'"
 					:id="`share-${prop.dId}`"
 					:type="'text'"
-					:placeholder="'Digite o nome do usuário'"
-				/>
-				<SubmitButton :text="'Compartilhar documento'" />
-				<form @submit.prevent="revokeAccess()">
-					<SubmitButton :class="'warning'" v-if="prop.sharedUserId" :text="`Revogar acesso à ${user}`" />
+					:placeholder="'Digite o nome do usuário'" />
+				<SubmitButton :class="'confirm'" :text="'Compartilhar documento'" />
+				<form v-if="prop.sharedUserId" @submit.prevent="revokeAccess()">
+					<SubmitButton :class="'warning'" :text="`Revogar acesso à ${user}`" />
 				</form>
-				<SubmitButton :class="'delete'" @clicked="emit('modalToggle')" :text="'Cancelar compartilhamento'" />
+				<SubmitButton @clicked="emit('modalToggle')" :text="'Cancelar compartilhamento'" />
 			</form>
 		</div>
 	</div>

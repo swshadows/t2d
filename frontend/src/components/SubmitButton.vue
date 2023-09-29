@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const prop = defineProps({
-	text: String
+	text: String,
 });
 const emit = defineEmits(["clicked"]);
 </script>
@@ -23,11 +23,20 @@ button {
 		cursor: pointer;
 		background: $main_darker;
 	}
-	&.warning {
-		background-color: #cc9c01;
+	&.confirm {
+		$confirm_color: #0077e7;
+		background-color: $confirm_color;
 		&:hover {
-			border-color: lighten(#ffc301, 20);
-			background-color: darken(#cc9c01, 20);
+			border-color: lighten($confirm_color, 20);
+			background-color: darken($confirm_color, 20);
+		}
+	}
+	&.warning {
+		$warning_color: #c78800;
+		background-color: $warning_color;
+		&:hover {
+			border-color: lighten($warning_color, 20);
+			background-color: darken($warning_color, 20);
 		}
 	}
 	&.delete {
